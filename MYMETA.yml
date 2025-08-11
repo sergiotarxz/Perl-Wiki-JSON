@@ -1,0 +1,19 @@
+---
+abstract: 'Parse wiki-like articles to a data-structure transformable to JSON.'
+author:
+  - 'Sergio Iglesias <contact@owlcode.tech>'
+build_requires: {}
+dynamic_config: 0
+generated_by: 'Module::Build version 0.4234, CPAN::Meta::Converter version 2.150010'
+license: unknown
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: '1.4'
+name: Wiki-JSON
+requires:
+  Data::Dumper: '0'
+  Module::Build: '0'
+  Moo: '0'
+  Test::Most: '0'
+version: 0
+x_serialization_backend: 'CPAN::Meta::YAML version 0.020'

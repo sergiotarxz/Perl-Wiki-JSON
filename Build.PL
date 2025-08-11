@@ -1,0 +1,19 @@
+#!/usr/bin/env perl
+use Module::Build;
+
+my $home = $ENV{HOME};
+
+my $build = Module::Build->new(
+    module_name   => 'Wiki::JSON',
+    license       => 'GPLv3',
+    dist_author   => 'Sergio Iglesias <contact@owlcode.tech>',
+    dist_abstract =>
+      'Parse wiki-like articles to a data-structure transformable to JSON.',
+    requires => {
+        'Module::Build' => 0,
+        'Moo',          => 0,
+        'Data::Dumper', => 0,
+        'Test::Most',   => 0,
+    },
+);
+$build->create_build_script;
