@@ -34,6 +34,10 @@ italic and bolds.
 Lists are only one level and not everything in mediawiki is supported by the
 moment.
 
+## INSTALLING
+
+    cpanm https://github.com/sergiotarxz/Perl-Wiki-JSON.git
+
 # INSTANCE\_METHODS
 
 ## new
