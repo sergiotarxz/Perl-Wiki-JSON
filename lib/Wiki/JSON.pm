@@ -264,6 +264,10 @@ sub _parse_in_array_search_new_elements( $self, $output, $buffer, $wiki_text,
               $self->_try_parse_nowiki( $output, $wiki_text, $buffer, $i,
                 $options );
             next if $needs_next;
+            ( $needs_next, $i, $buffer ) =
+              $self->_try_parse_link( $output, $wiki_text, $buffer, $i,
+                $options );
+            next if $needs_next;
         }
     }
     return ( $needs_next, $i, $buffer, );
@@ -525,6 +529,67 @@ sub _recurse_pending_bold_or_italic( $self, $output, $wiki_text, $i, $buffer,
         $options );
     $return[0] = 1;
     return @return;
+}
+
+sub _try_parse_link( $self, $output, $wiki_text, $buffer, $i, $options ) {
+    my $searched    = '[[';
+    my $size_search = length $searched;
+    my $last_word   = substr $wiki_text, $i, $size_search;
+    if ( $last_word ne $searched ) {
+        return ( 0, $i, $buffer );
+    }
+    my $valid_characters = qr/[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\-._~:\/?#@!\$&\'\(\)\*\+,;= ]/;
+    for ( $size_search = 3 ; ; $size_search++ ) {
+        my $last_word = substr $wiki_text, $i, $size_search;
+        if ( $last_word !~ /^\[\[$valid_characters+$/ ) {
+            last;
+        }
+    }
+    $size_search--;
+    if ( $size_search < 3 ) {
+        return ( 0, $i, $buffer );
+    }
+    $last_word = substr $wiki_text, $i, $size_search + 2;
+    if ( $last_word =~ /^\[\[($valid_characters+)\]\]$/ ) {
+        ( $output, $buffer ) =
+          $self->_save_before_new_element( $output, $buffer, $options );
+        push @$output,
+          {
+            type          => 'link',
+            link => $1,
+            title => $1,
+          };
+        return ( 1, $i + $size_search + 2, $buffer );
+    }
+    $last_word = substr $wiki_text, $i, $size_search + 1;
+    if ( $last_word !~ /^\[\[($valid_characters+)\|/ ) {
+        return ( 0, $i, $buffer );
+    }
+    my $link = $1;
+
+    ( $output, $buffer ) =
+      $self->_save_before_new_element( $output, $buffer, $options );
+
+    my $title = '';
+    for ($i = $i + $size_search + 1; $i < length $wiki_text; $i++) {
+        my $searched    = ']]';
+        my $size_search = length $searched;
+        my $last_word = substr $wiki_text, $i, $size_search;
+        if ($searched eq $last_word) {
+            last;
+        }
+        $title .= substr $wiki_text, $i, 1;
+    }
+
+    my $template = {
+        type          => 'link',
+        link => $link,
+        title => $title || $link,
+    };
+    push @$output, $template; 
+    $i+=1;
+    $buffer = '';
+    return ( 1, $i, $buffer);
 }
 
 sub _try_parse_template( $self, $output, $wiki_text, $buffer, $i, $options ) {
