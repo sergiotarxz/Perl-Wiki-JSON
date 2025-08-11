@@ -740,7 +740,7 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
     The parser has some quirks == This will generate a title ==
     ''' == '' Unterminated syntaxes will still be parsed until the end of file
     This is a link to a wiki article: [[Cool Article]]
-    This is a link to a wiki article with an alias: [[Cool Article| cool article]]
+    This is a link to a wiki article with an alias: [[Cool Article|cool article]]
     EOF
 
 =head1 DESCRIPTION
