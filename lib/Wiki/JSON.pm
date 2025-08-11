@@ -749,8 +749,6 @@ A parser for a subset of a mediawiki-like syntax, quirks include some
 supposedly inline elements are parsed multi-line like headers, templates*,
 italic and bolds.
 
-    EOF
-
 =head1 DESCRIPTION
 
 A parser for a subset of a mediawiki-like syntax, quirks include some
