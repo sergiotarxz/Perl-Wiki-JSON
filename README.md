@@ -38,6 +38,10 @@ moment.
 
     cpanm https://github.com/sergiotarxz/Perl-Wiki-JSON.git
 
+## USING AS A COMMAND
+
+    wiki2json file.wiki > output.json
+
 # INSTANCE\_METHODS
 
 ## new

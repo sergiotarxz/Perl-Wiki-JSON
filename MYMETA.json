@@ -16,9 +16,11 @@
    "prereqs" : {
       "runtime" : {
          "requires" : {
+            "Cpanel::JSON::XS" : "0",
             "Data::Dumper" : "0",
             "Module::Build" : "0",
             "Moo" : "0",
+            "Path::Tiny" : "0",
             "Test::Most" : "0"
          }
       }
