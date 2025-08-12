@@ -2,6 +2,8 @@ Build.PL
 lib/Wiki/JSON.pm
 LICENSE
 MANIFEST			This list of files
+META.json
+META.yml
 README.md
 scripts/wiki2json
 t/000001-text.t
@@ -12,5 +14,4 @@ t/000005-bold-and-italic.t
 t/000006-list.t
 t/000007-url.t
 try.wiki
-META.yml
-META.json
+Wiki-JSON-v0.0.2.tar.gz

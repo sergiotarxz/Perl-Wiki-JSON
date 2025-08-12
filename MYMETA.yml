@@ -10,6 +10,10 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: '1.4'
 name: Wiki-JSON
+provides:
+  Wiki::JSON:
+    file: lib/Wiki/JSON.pm
+    version: v0.0.2
 requires:
   Cpanel::JSON::XS: '0'
   Data::Dumper: '0'

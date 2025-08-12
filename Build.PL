@@ -6,6 +6,7 @@ my $home = $ENV{HOME};
 my $build = Module::Build->new(
     module_name   => 'Wiki::JSON',
     license       => 'GPLv3',
+    dist_version_from       => 'lib/Wiki/JSON.pm',
     dist_author   => 'Sergio Iglesias <contact@owlcode.tech>',
     dist_abstract =>
       'Parse wiki-like articles to a data-structure transformable to JSON.',
@@ -17,8 +18,6 @@ my $build = Module::Build->new(
         'Cpanel::JSON::XS' => 0,
         'Path::Tiny'       => 0,
     },
-    script_files => [
-        'scripts/wiki2json',
-    ]
+    script_files => [ 'scripts/wiki2json', ]
 );
 $build->create_build_script;
