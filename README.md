@@ -24,7 +24,7 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
     The parser has some quirks == This will generate a title ==
     ''' == '' Unterminated syntaxes will still be parsed until the end of file
     This is a link to a wiki article: [[Cool Article]]
-    This is a link to a wiki article with an alias: [[Cool Article| cool article]]
+    This is a link to a wiki article with an alias: [[Cool Article|cool article]]
     EOF
 
 # DESCRIPTION
@@ -32,8 +32,6 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
 A parser for a subset of a mediawiki-like syntax, quirks include some
 supposedly inline elements are parsed multi-line like headers, templates\*,
 italic and bolds.
-
-    EOF
 
 # DESCRIPTION
 
