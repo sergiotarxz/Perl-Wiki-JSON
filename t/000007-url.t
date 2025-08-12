@@ -50,4 +50,18 @@ use_ok 'Wiki::JSON';
     ], 'Simple url test with text wrapping it';
 }
 
+{
+    my $parsed = Wiki::JSON->new->parse(q/This is the funny article: [[Funny Article|funny article<nowiki>]]<\/nowiki>]]. It is cool./);
+
+#    print Data::Dumper::Dumper($parsed);
+    is_deeply $parsed, [
+        'This is the funny article: ',
+        {
+            type => 'link',
+            link => 'Funny Article',
+            title => 'funny article]]',
+        },
+        '. It is cool.',
+    ], 'Simple url test with text wrapping it and a nowiki caption';
+}
 done_testing;
