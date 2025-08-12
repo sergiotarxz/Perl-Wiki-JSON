@@ -18,4 +18,4 @@ requires:
   Path::Tiny: '0'
   Test::Most: '0'
 version: 0
-x_serialization_backend: 'CPAN::Meta::YAML version 0.020'
+x_serialization_backend: 'CPAN::Meta::YAML version 0.018'
