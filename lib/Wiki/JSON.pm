@@ -8,6 +8,8 @@ use warnings;
 use Moo;
 use Data::Dumper;
 
+our $VERSION = "0.0.1";
+
 my $LIST_ELEMENT_DELIMITER = "\n* ";
 
 sub parse( $self, $wiki_text ) {
