@@ -12,3 +12,5 @@ t/000005-bold-and-italic.t
 t/000006-list.t
 t/000007-url.t
 try.wiki
+META.yml
+META.json
