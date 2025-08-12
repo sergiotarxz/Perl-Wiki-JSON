@@ -8,7 +8,7 @@ use warnings;
 use Moo;
 use Data::Dumper;
 
-our $VERSION = "0.0.1";
+our $VERSION = "0.0.2";
 
 my $LIST_ELEMENT_DELIMITER = "\n* ";
 
