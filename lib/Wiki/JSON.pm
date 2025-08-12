@@ -731,11 +731,11 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
     use Wiki::JSON;
 
     my $structure = Wiki::JSON->new->parse(<<'EOF');
-    = This is a wiki title
+    = This is a wiki title =
     '''This is bold'''
     ''This is italic''
     '''''This is bold and italic'''''
-    == This is a smaller title, the user can use no more than 6 equal signs
+    == This is a smaller title, the user can use no more than 6 equal signs ==
     <nowiki>''This is printed without expanding the special characters</nowiki>
     * This
     * Is
