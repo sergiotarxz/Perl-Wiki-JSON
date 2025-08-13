@@ -8,7 +8,7 @@ use warnings;
 use Moo;
 use Data::Dumper;
 
-our $VERSION = "0.0.6";
+our $VERSION = "0.0.7";
 
 my $LIST_ELEMENT_DELIMITER = "\n* ";
 
@@ -1085,13 +1085,15 @@ moment.
 
 Parses the wiki format into a serializable to JSON or YAML Perl data structure.
 
-=head3 Return from parse
+=head1 RETURN FROM METHODS
+
+=head2 parse
 
 The return is an ArrayRef in which each element is either a string or a HashRef.
 
 HashRefs can be classified by the key type which can be one of these:
 
-=head4 hx
+=head3 hx
 
 A header to be printed as h1..h6 in HTML, has the following fields:
 
@@ -1107,7 +1109,7 @@ An ArrayRef defined by the return from parse.
 
 =back
 
-=head4 template
+=head3 template
 
 A template thought for developer defined expansions of how some data shoudl be represented.
 
@@ -1123,7 +1125,7 @@ An ArrayRef defined by the return from parse.
 
 =back
 
-=head4 bold
+=head3 bold
 
 A set of elements that must be represented as bold text.
 
@@ -1135,7 +1137,7 @@ An ArrayRef defined by the return from parse.
 
 =back
 
-=head4 italic
+=head3 italic
 
 A set of elements that must be represented as italic text.
 
@@ -1147,7 +1149,7 @@ An ArrayRef defined by the return from parse.
 
 =back
 
-=head4 bold_and_italic
+=head3 bold_and_italic
 
 A set of elements that must be represented as bold and italic text.
 
@@ -1159,7 +1161,7 @@ An ArrayRef defined by the return from parse.
 
 =back
 
-=head4 unordered_list
+=head3 unordered_list
 
 A bullet point list.
 
@@ -1171,7 +1173,7 @@ A ArrayRef of HashRefs from the type list_element.
 
 =back
 
-=head4 list_element
+=head3 list_element
 
 An element in a list, this element must not appear outside of the output element of a list.
 
@@ -1183,7 +1185,7 @@ An ArrayRef defined by the return from parse.
 
 =back
 
-=head4 link
+=head3 link
 
 An URL or a link to other Wiki Article.
 
@@ -1199,7 +1201,7 @@ The text that should be used while showing this URL to point the user where it i
 
 =back
 
-=head4 image
+=head3 image
 
 An Image, PDF, or Video.
 

@@ -66,13 +66,15 @@ moment.
 
 Parses the wiki format into a serializable to JSON or YAML Perl data structure.
 
-### Return from parse
+# RETURN FROM METHODS
+
+## parse
 
 The return is an ArrayRef in which each element is either a string or a HashRef.
 
 HashRefs can be classified by the key type which can be one of these:
 
-#### hx
+### hx
 
 A header to be printed as h1..h6 in HTML, has the following fields:
 
@@ -84,7 +86,7 @@ A header to be printed as h1..h6 in HTML, has the following fields:
 
     An ArrayRef defined by the return from parse.
 
-#### template
+### template
 
 A template thought for developer defined expansions of how some data shoudl be represented.
 
@@ -96,7 +98,7 @@ A template thought for developer defined expansions of how some data shoudl be r
 
     An ArrayRef defined by the return from parse.
 
-#### bold
+### bold
 
 A set of elements that must be represented as bold text.
 
@@ -104,7 +106,7 @@ A set of elements that must be represented as bold text.
 
     An ArrayRef defined by the return from parse.
 
-#### italic
+### italic
 
 A set of elements that must be represented as italic text.
 
@@ -112,7 +114,7 @@ A set of elements that must be represented as italic text.
 
     An ArrayRef defined by the return from parse.
 
-#### bold\_and\_italic
+### bold\_and\_italic
 
 A set of elements that must be represented as bold and italic text.
 
@@ -120,7 +122,7 @@ A set of elements that must be represented as bold and italic text.
 
     An ArrayRef defined by the return from parse.
 
-#### unordered\_list
+### unordered\_list
 
 A bullet point list.
 
@@ -128,7 +130,7 @@ A bullet point list.
 
     A ArrayRef of HashRefs from the type list\_element.
 
-#### list\_element
+### list\_element
 
 An element in a list, this element must not appear outside of the output element of a list.
 
@@ -136,7 +138,7 @@ An element in a list, this element must not appear outside of the output element
 
     An ArrayRef defined by the return from parse.
 
-#### link
+### link
 
 An URL or a link to other Wiki Article.
 
@@ -148,7 +150,7 @@ An URL or a link to other Wiki Article.
 
     The text that should be used while showing this URL to point the user where it is going to be directed.
 
-#### image
+### image
 
 An Image, PDF, or Video.
 
