@@ -8,7 +8,7 @@ use warnings;
 use Moo;
 use Data::Dumper;
 
-our $VERSION = "0.0.7";
+our $VERSION = "0.0.8";
 
 my $LIST_ELEMENT_DELIMITER = "\n* ";
 
@@ -1097,7 +1097,7 @@ HashRefs can be classified by the key type which can be one of these:
 
 A header to be printed as h1..h6 in HTML, has the following fields:
 
-=over
+=over 4
 
 =item hx_level
 
@@ -1113,7 +1113,7 @@ An ArrayRef defined by the return from parse.
 
 A template thought for developer defined expansions of how some data shoudl be represented.
 
-=over
+=over 4
 
 =item template_name
 
@@ -1129,7 +1129,7 @@ An ArrayRef defined by the return from parse.
 
 A set of elements that must be represented as bold text.
 
-=over
+=over 4
 
 =item output
 
@@ -1141,7 +1141,7 @@ An ArrayRef defined by the return from parse.
 
 A set of elements that must be represented as italic text.
 
-=over
+=over 4
 
 =item output
 
@@ -1153,7 +1153,7 @@ An ArrayRef defined by the return from parse.
 
 A set of elements that must be represented as bold and italic text.
 
-=over
+=over 4
 
 =item output
 
@@ -1165,7 +1165,7 @@ An ArrayRef defined by the return from parse.
 
 A bullet point list.
 
-=over
+=over 4
 
 =item output
 
@@ -1177,7 +1177,7 @@ A ArrayRef of HashRefs from the type list_element.
 
 An element in a list, this element must not appear outside of the output element of a list.
 
-=over
+=over 4
 
 =item output
 
@@ -1189,7 +1189,7 @@ An ArrayRef defined by the return from parse.
 
 An URL or a link to other Wiki Article.
 
-=over
+=over 4
 
 =item link
 
@@ -1205,7 +1205,7 @@ The text that should be used while showing this URL to point the user where it i
 
 An Image, PDF, or Video.
 
-=over
+=over 4
 
 =item link
 
@@ -1228,9 +1228,11 @@ a subprocess the program can kill if it takes too long.
 
 The developer can use fork, waitpid, pipe, and non-blocking IO for that.
 
-=head1 LEGAL
+=head1 LICENSE
 
-Copyright ©Sergiotarxz (2025)
+    Copyright ©Sergiotarxz (2025)
+
+Licensed under the The GNU General Public License, Version 3, June 2007 L<http://www.gnu.org/licenses/gpl-3.0.txt>.
 
 You can use this software under the terms of the GPLv3 license or a new later
 version provided by the FSF or the GNU project.

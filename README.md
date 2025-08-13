@@ -173,7 +173,7 @@ a subprocess the program can kill if it takes too long.
 
 The developer can use fork, waitpid, pipe, and non-blocking IO for that.
 
-# LEGAL
+# LICENSE
 
 Copyright ©Sergiotarxz (2025)
 
