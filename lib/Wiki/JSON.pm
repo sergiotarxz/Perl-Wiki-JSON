@@ -8,7 +8,7 @@ use warnings;
 use Moo;
 use Data::Dumper;
 
-our $VERSION = "0.0.5";
+our $VERSION = "0.0.6";
 
 my $LIST_ELEMENT_DELIMITER = "\n* ";
 
@@ -1095,6 +1095,8 @@ HashRefs can be classified by the key type which can be one of these:
 
 A header to be printed as h1..h6 in HTML, has the following fields:
 
+=over
+
 =item hx_level
 
 A number from 1 to 6 defining the header level.
@@ -1103,9 +1105,13 @@ A number from 1 to 6 defining the header level.
 
 An ArrayRef defined by the return from parse.
 
+=back
+
 =head4 template
 
 A template thought for developer defined expansions of how some data shoudl be represented.
+
+=over
 
 =item template_name
 
@@ -1115,49 +1121,73 @@ The name of the template.
 
 An ArrayRef defined by the return from parse.
 
+=back
+
 =head4 bold
 
 A set of elements that must be represented as bold text.
 
+=over
+
 =item output
 
 An ArrayRef defined by the return from parse.
+
+=back
 
 =head4 italic
 
 A set of elements that must be represented as italic text.
 
+=over
+
 =item output
 
 An ArrayRef defined by the return from parse.
+
+=back
 
 =head4 bold_and_italic
 
 A set of elements that must be represented as bold and italic text.
 
+=over
+
 =item output
 
 An ArrayRef defined by the return from parse.
+
+=back
 
 =head4 unordered_list
 
 A bullet point list.
 
+=over
+
 =item output
 
 A ArrayRef of HashRefs from the type list_element.
+
+=back
 
 =head4 list_element
 
 An element in a list, this element must not appear outside of the output element of a list.
 
+=over
+
 =item output
 
 An ArrayRef defined by the return from parse.
 
+=back
+
 =head4 link
 
 An URL or a link to other Wiki Article.
+
+=over
 
 =item link
 
@@ -1167,9 +1197,13 @@ The String containing the URL or link to other Wiki Article.
 
 The text that should be used while showing this URL to point the user where it is going to be directed.
 
+=back
+
 =head4 image
 
 An Image, PDF, or Video.
+
+=over
 
 =item link
 
@@ -1180,6 +1214,8 @@ Where to find the File.
 What to show the user if the image is requested to explain to the user what he is seeing.
 
 =item options
+
+=back
 
 Undocumented by the moment.
 
