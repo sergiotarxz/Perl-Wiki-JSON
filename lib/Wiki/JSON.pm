@@ -1179,7 +1179,7 @@ Where to find the File.
 
 What to show the user if the image is requested to explain to the user what he is seeing.
 
-=head6 options
+=item options
 
 Undocumented by the moment.
 

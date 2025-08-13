@@ -160,7 +160,9 @@ An Image, PDF, or Video.
 
     What to show the user if the image is requested to explain to the user what he is seeing.
 
-optionsUndocumented by the moment.
+- options
+
+    Undocumented by the moment.
 
 # BUGS
 
@@ -252,6 +254,6 @@ Hey! **The above document had some coding errors, which are explained below:**
 
     '=item' outside of any '=over'
 
-- Around line 1182:
+- Around line 1186:
 
-    You forgot a '=back' before '=head6'
+    You forgot a '=back' before '=head1'
