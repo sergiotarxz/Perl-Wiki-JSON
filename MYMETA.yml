@@ -13,7 +13,7 @@ name: Wiki-JSON
 provides:
   Wiki::JSON:
     file: lib/Wiki/JSON.pm
-    version: v0.0.2
+    version: v0.0.3
 requires:
   Cpanel::JSON::XS: '0'
   Data::Dumper: '0'

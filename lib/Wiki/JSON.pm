@@ -267,6 +267,10 @@ sub _parse_in_array_search_new_elements( $self, $output, $buffer, $wiki_text,
                 $options );
             next if $needs_next;
             ( $needs_next, $i, $buffer ) =
+              $self->_try_parse_image( $output, $wiki_text, $buffer, $i,
+                $options );
+            next if $needs_next;
+            ( $needs_next, $i, $buffer ) =
               $self->_try_parse_link( $output, $wiki_text, $buffer, $i,
                 $options );
             next if $needs_next;
@@ -531,6 +535,297 @@ sub _recurse_pending_bold_or_italic( $self, $output, $wiki_text, $i, $buffer,
         $options );
     $return[0] = 1;
     return @return;
+}
+
+sub _try_parse_image( $self, $output, $wiki_text, $buffer, $i, $options ) {
+    my $searched    = '[[File:';
+    my $size_search = length $searched;
+    my $orig_size_search = $size_search;
+    my $last_word   = substr $wiki_text, $i, $size_search;
+    if ( $last_word ne $searched ) {
+        return ( 0, $i, $buffer );
+    }
+    my $valid_characters =
+qr/[ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\-._~:\/?#@!\$&\'\(\)\*\+,;= ]/;
+    for ( $size_search = $size_search + 1 ; ; $size_search++ ) {
+        my $last_word = substr $wiki_text, $i, $size_search;
+        if ( $last_word !~ /^\[\[File:$valid_characters+$/ ) {
+            last;
+        }
+    }
+    $size_search--;
+    if ( $size_search < $orig_size_search + 1 ) {
+        return ( 0, $i, $buffer );
+    }
+    $last_word = substr $wiki_text, $i, $size_search + 2;
+    if ( $last_word =~ /^\[\[File:($valid_characters+)\]\]$/ ) {
+        ( $output, $buffer ) =
+          $self->_save_before_new_element( $output, $buffer, $options );
+        push @$output,
+          {
+            type  => 'image',
+            link  => $1,
+            caption => '',
+            options => {},
+          };
+        return ( 1, $i + $size_search + 2, $buffer );
+    }
+    $last_word = substr $wiki_text, $i, $size_search + 1;
+    if ( $last_word !~ /^\[\[File:($valid_characters+)\|/ ) {
+        return ( 0, $i, $buffer );
+    }
+    my $link = $1;
+
+    ( $output, $buffer ) =
+      $self->_save_before_new_element( $output, $buffer, $options );
+
+    my $tmp_buffer = '';
+    my $is_caption = 0;
+    my $element_options = {};
+    my $caption;
+    for ( $i = $i + $size_search + 1 ; $i < length $wiki_text ; $i++ ) {
+        my $searched    = ']]';
+        my $size_search = length $searched;
+        my $last_word   = substr $wiki_text, $i, $size_search;
+        if ( $searched eq $last_word ) {
+            ($caption) = $self->_try_parse_link_component($tmp_buffer, $caption, $element_options);
+            $tmp_buffer = '';
+            last;
+        }
+        $searched = '|';
+        $size_search = length $searched;
+        $last_word   = substr $wiki_text, $i, $size_search;
+        if ($searched eq $last_word) {
+            ($caption) = $self->_try_parse_link_component($tmp_buffer, $caption, $element_options);
+            $tmp_buffer = '';
+            next;
+        }
+        my $need_next;
+        ( $need_next, $i, $buffer ) =
+          $self->_try_parse_nowiki( $output, $wiki_text, $buffer, $i,
+            $options );
+        $is_caption = 1 if $need_next;
+        next if $need_next;
+
+        $tmp_buffer .= substr $wiki_text, $i, 1;
+    }
+
+    my $template = {
+        type  => 'image',
+        link  => $link,
+        caption => $caption,
+        options => $element_options,
+    };
+    push @$output, $template;
+    $i += 1;
+    $buffer = '';
+    return ( 1, $i, $buffer );
+}
+
+sub _is_defined_image_format_exclusive($self, $element_options) {
+    for my $option (qw/frameless frame framed thumb thumbnail/) {
+        if (defined $element_options->{format}{$option}) {
+            return 1;
+        }
+    }
+    return;
+}
+
+sub _try_parse_link_component($self, $tmp_buffer, $caption, $element_options) {
+    if ($tmp_buffer =~ /^border$/) {
+        $element_options->{format}{border} = 1; 
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^frameless$/) {
+        return $caption if $self->_is_defined_image_format_exclusive($element_options);
+        $element_options->{format}{frameless} = 1; 
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^frame$/) {
+        return $caption if $self->_is_defined_image_format_exclusive($element_options);
+        $element_options->{format}{frame} = 1; 
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^framed$/) {
+        return $caption if $self->_is_defined_image_format_exclusive($element_options);
+        $element_options->{format}{frame} = 1; 
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^thumb$/) {
+        return $caption if $self->_is_defined_image_format_exclusive($element_options);
+        $element_options->{format}{thumb} = 1; 
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^thumbnail$/) {
+        return $caption if $self->_is_defined_image_format_exclusive($element_options);
+        $element_options->{format}{thumb} = 1; 
+        return $caption;
+    }
+    my $return_now;
+    ($return_now) = $self->_try_parse_image_resizing($tmp_buffer, $element_options);
+    return $caption if $return_now;
+    if ($tmp_buffer =~ /^left$/) {
+        return $caption if $self->_is_defined_image_halign_exclusive($element_options);
+        $element_options->{halign} = 'left';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^right$/) {
+        return $caption if $self->_is_defined_image_halign_exclusive($element_options);
+        $element_options->{halign} = 'right';
+        return $caption;
+    }    
+    if ($tmp_buffer =~ /^center$/) {
+        return $caption if $self->_is_defined_image_halign_exclusive($element_options);
+        $element_options->{halign} = 'center';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^none$/) {
+        return $caption if $self->_is_defined_image_halign_exclusive($element_options);
+        $element_options->{halign} = 'none';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^baseline$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'baseline';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^sub$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'sub';
+        return $caption;
+    }    
+    if ($tmp_buffer =~ /^super$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'super';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^top$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'top';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^text-top$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'text-top';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^middle$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'middle';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^bottom$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'bottom';
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^text-bottom$/) {
+        return $caption if $self->_is_defined_image_valign_exclusive($element_options);
+        $element_options->{valign} = 'text-bottom';
+        return $caption;
+    }
+    if (my ($link) = $tmp_buffer =~ /^link=(.*)$/) {
+        return $caption if defined $element_options->{link};
+        $element_options->{link} = $link;
+        return $caption;
+    }
+    if (my ($alt) = $tmp_buffer =~ /^alt=(.*)$/) {
+        return $caption if defined $element_options->{alt};
+        $element_options->{alt} = $alt;
+        return $caption;
+    }
+    if (my ($page) = $tmp_buffer =~ /^page=(\d+)$/) {
+        return $caption if defined $element_options->{page};
+        $element_options->{page} = $page;
+        return $caption;
+    }
+    if (my ($thumbtime) = $tmp_buffer =~ /^thumbtime=((?:\d+:)?(?:\d+:)\d+)$/) {
+        return $caption if defined $element_options->{thumbtime};
+        $element_options->{thumbtime} = $thumbtime;
+        return $caption;
+    }
+    if (my ($start) = $tmp_buffer =~ /^start=((?:\d+:)?(?:\d+:)\d+)$/) {
+        return $caption if defined $element_options->{start};
+        $element_options->{start} = $start;
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^muted$/) {
+        return $caption if defined $element_options->{muted};
+        $element_options->{muted} = 1;
+        return $caption;
+    }
+    if ($tmp_buffer =~ /^loop$/) {
+        return $caption if defined $element_options->{loop};
+        $element_options->{loop} = 1;
+        return $caption;
+    }
+    if (my ($loosy) = $tmp_buffer =~ /^loosy=(.*)$/) {
+        return $caption if ($loosy ne 'false');
+        return $caption if defined $element_options->{not_loosy};
+        $element_options->{not_loosy} = 1;
+        return $caption;
+    }
+    if (my ($class_string) = $tmp_buffer =~ /^class=(.*)$/) {
+        return $caption if defined $element_options->{classes};
+        $element_options->{classes} = [];
+        for my $class (split /\s+/, $class_string) {
+            push @{$element_options->{classes}}, $class;
+        }
+        return $caption;
+    }
+
+    if (!defined $caption) {
+        return $tmp_buffer;
+    }
+    return $caption;
+}
+
+sub _is_defined_image_valign_exclusive($self, $element_options) {
+    if (defined $element_options->{valign}) {
+        return 1;
+    }
+    return 0;
+}
+
+sub _is_defined_image_halign_exclusive($self, $element_options) {
+    if (defined $element_options->{halign}) {
+        return 1;
+    }
+    return 0;
+}
+
+sub _is_defined_image_resizing_exclusive($self, $element_options) {
+    for my $option (qw/width height upright/) {
+        if (defined $element_options->{resize}{$option}) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+sub _try_parse_image_resizing($self, $tmp_buffer, $element_options) {
+    if (my ($width) = $tmp_buffer =~ /^(\d+)(?: |)px$/) {
+        return 1 if $self->_is_defined_image_resizing_exclusive($element_options);
+        $element_options->{resize}{width} = 0+$width;
+        return 1;
+    }
+    if (my ($height) = $tmp_buffer =~ /^x(\d+)(?: |)px$/) {
+        return 1 if $self->_is_defined_image_resizing_exclusive($element_options);
+        $element_options->{resize}{height} = 0+$height;
+        return 1;
+    }
+    if (my ($width, $height) = $tmp_buffer =~ /^(\d+)x(\d+)(?: |)px$/) {
+        return 1 if $self->_is_defined_image_resizing_exclusive($element_options);
+        $element_options->{resize}{width} = 0+$width;
+        $element_options->{resize}{height} = 0+$height;
+        return 1;
+    }
+    if (my ($upright) = $tmp_buffer =~ /^upright(?: |=)(\d+\.\d+)$/) {
+        return 1 if $self->_is_defined_image_resizing_exclusive($element_options);
+        $element_options->{resize}{upright} = $upright;
+        return 1;
+    }
+    return 0;
 }
 
 sub _try_parse_link( $self, $output, $wiki_text, $buffer, $i, $options ) {
