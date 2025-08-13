@@ -8,7 +8,7 @@ use warnings;
 use Moo;
 use Data::Dumper;
 
-our $VERSION = "0.0.4";
+our $VERSION = "0.0.5";
 
 my $LIST_ELEMENT_DELIMITER = "\n* ";
 
@@ -1084,6 +1084,104 @@ moment.
     my $structure = $wiki_parser->parse($wiki_string);
 
 Parses the wiki format into a serializable to JSON or YAML Perl data structure.
+
+=head3 Return from parse
+
+The return is an ArrayRef in which each element is either a string or a HashRef.
+
+HashRefs can be classified by the key type which can be one of these:
+
+=head4 hx
+
+A header to be printed as h1..h6 in HTML, has the following fields:
+
+=head5 hx_level
+
+A number from 1 to 6 defining the header level.
+
+=head5 output
+
+An ArrayRef defined by the return from parse.
+
+=head4 template
+
+A template thought for developer defined expansions of how some data shoudl be represented.
+
+=head5 template_name
+
+The name of the template.
+
+=head5 output
+
+An ArrayRef defined by the return from parse.
+
+=head4 bold
+
+A set of elements that must be represented as bold text.
+
+=head5 output
+
+An ArrayRef defined by the return from parse.
+
+=head4 italic
+
+A set of elements that must be represented as italic text.
+
+=head5 output
+
+An ArrayRef defined by the return from parse.
+
+=head4 bold_and_italic
+
+A set of elements that must be represented as bold and italic text.
+
+=head5 output
+
+An ArrayRef defined by the return from parse.
+
+=head4 unordered_list
+
+A bullet point list.
+
+=head5 output
+
+A ArrayRef of HashRefs from the type list_element.
+
+=head4 list_element
+
+An element in a list, this element must not appear outside of the output element of a list.
+
+=head5 output
+
+An ArrayRef defined by the return from parse.
+
+=head4 link
+
+An URL or a link to other Wiki Article.
+
+=head5 link
+
+The String containing the URL or link to other Wiki Article.
+
+=head5 title
+
+The text that should be used while showing this URL to point the user where it is going to be directed.
+
+=head4 image
+
+An Image, PDF, or Video.
+
+=head5 link
+
+Where to find the File.
+
+=head5 caption
+
+What to show the user if the image is requested to explain to the user what he is seeing.
+
+=head6 options
+
+Undocumented by the moment.
 
 =head1 BUGS
 

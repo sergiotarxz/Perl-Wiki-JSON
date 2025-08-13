@@ -7,11 +7,11 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
     use Wiki::JSON;
 
     my $structure = Wiki::JSON->new->parse(<<'EOF');
-    = This is a wiki title
+    = This is a wiki title =
     '''This is bold'''
     ''This is italic''
     '''''This is bold and italic'''''
-    == This is a smaller title, the user can use no more than 6 equal signs
+    == This is a smaller title, the user can use no more than 6 equal signs ==
     <nowiki>''This is printed without expanding the special characters</nowiki>
     * This
     * Is
@@ -25,6 +25,8 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
     ''' == '' Unterminated syntaxes will still be parsed until the end of file
     This is a link to a wiki article: [[Cool Article]]
     This is a link to a wiki article with an alias: [[Cool Article|cool article]]
+    This is a link to a URL with an alias: [[https://example.com/cool-source.html|cool article]]
+    This is a link to a Image [[File:https:/example.com/img.png|50x50px|frame|This is a caption]]
     EOF
 
 # DESCRIPTION
@@ -63,6 +65,76 @@ moment.
     my $structure = $wiki_parser->parse($wiki_string);
 
 Parses the wiki format into a serializable to JSON or YAML Perl data structure.
+
+### Return from parse
+
+The return is an ArrayRef in which each element is either a string or a HashRef.
+
+HashRefs can be classified by the key type which can be one of these:
+
+#### hx
+
+A header to be printed as h1..h6 in HTML, has the following fields:
+
+hx\_levelA number from 1 to 6 defining the header level.
+
+outputAn ArrayRef defined by the return from parse.
+
+#### template
+
+A template thought for developer defined expansions of how some data shoudl be represented.
+
+template\_nameThe name of the template.
+
+outputAn ArrayRef defined by the return from parse.
+
+#### bold
+
+A set of elements that must be represented as bold text.
+
+outputAn ArrayRef defined by the return from parse.
+
+#### italic
+
+A set of elements that must be represented as italic text.
+
+outputAn ArrayRef defined by the return from parse.
+
+#### bold\_and\_italic
+
+A set of elements that must be represented as bold and italic text.
+
+outputAn ArrayRef defined by the return from parse.
+
+#### unordered\_list
+
+A bullet point list.
+
+outputA ArrayRef of HashRefs from the type list\_element.
+
+#### list\_element
+
+An element in a list, this element must not appear outside of the output element of a list.
+
+outputAn ArrayRef defined by the return from parse.
+
+#### link
+
+An URL or a link to other Wiki Article.
+
+linkThe String containing the URL or link to other Wiki Article.
+
+titleThe text that should be used while showing this URL to point the user where it is going to be directed.
+
+#### image
+
+An Image, PDF, or Video.
+
+linkWhere to find the File.
+
+captionWhat to show the user if the image is requested to explain to the user what he is seeing.
+
+optionsUndocumented by the moment.
 
 # BUGS
 
