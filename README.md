@@ -162,7 +162,7 @@ An Image, PDF, or Video.
 
 - options
 
-    Undocumented by the moment.
+Undocumented by the moment.
 
 # BUGS
 
@@ -181,79 +181,3 @@ version provided by the FSF or the GNU project.
 # SEE ALSO
 
 Look what is supported and how in the tests: [https://github.com/sergiotarxz/Perl-Wiki-JSON/tree/main/t](https://github.com/sergiotarxz/Perl-Wiki-JSON/tree/main/t)
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 1098:
-
-    '=item' outside of any '=over'
-
-- Around line 1106:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1110:
-
-    '=item' outside of any '=over'
-
-- Around line 1118:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1122:
-
-    '=item' outside of any '=over'
-
-- Around line 1126:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1130:
-
-    '=item' outside of any '=over'
-
-- Around line 1134:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1138:
-
-    '=item' outside of any '=over'
-
-- Around line 1142:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1146:
-
-    '=item' outside of any '=over'
-
-- Around line 1150:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1154:
-
-    '=item' outside of any '=over'
-
-- Around line 1158:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1162:
-
-    '=item' outside of any '=over'
-
-- Around line 1170:
-
-    You forgot a '=back' before '=head4'
-
-- Around line 1174:
-
-    '=item' outside of any '=over'
-
-- Around line 1186:
-
-    You forgot a '=back' before '=head1'
