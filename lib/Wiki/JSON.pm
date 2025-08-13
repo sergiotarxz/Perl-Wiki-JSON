@@ -8,7 +8,7 @@ use warnings;
 use Moo;
 use Data::Dumper;
 
-our $VERSION = "0.0.3";
+our $VERSION = "0.0.4";
 
 my $LIST_ELEMENT_DELIMITER = "\n* ";
 
@@ -1044,6 +1044,8 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
     ''' == '' Unterminated syntaxes will still be parsed until the end of file
     This is a link to a wiki article: [[Cool Article]]
     This is a link to a wiki article with an alias: [[Cool Article|cool article]]
+    This is a link to a URL with an alias: [[https://example.com/cool-source.html|cool article]]
+    This is a link to a Image [[File:https:/example.com/img.png|50x50px|frame|This is a caption]]
     EOF
 
 =head1 DESCRIPTION
