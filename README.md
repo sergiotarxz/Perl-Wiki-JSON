@@ -76,63 +76,89 @@ HashRefs can be classified by the key type which can be one of these:
 
 A header to be printed as h1..h6 in HTML, has the following fields:
 
-hx\_levelA number from 1 to 6 defining the header level.
+- hx\_level
 
-outputAn ArrayRef defined by the return from parse.
+    A number from 1 to 6 defining the header level.
+
+- output
+
+    An ArrayRef defined by the return from parse.
 
 #### template
 
 A template thought for developer defined expansions of how some data shoudl be represented.
 
-template\_nameThe name of the template.
+- template\_name
 
-outputAn ArrayRef defined by the return from parse.
+    The name of the template.
+
+- output
+
+    An ArrayRef defined by the return from parse.
 
 #### bold
 
 A set of elements that must be represented as bold text.
 
-outputAn ArrayRef defined by the return from parse.
+- output
+
+    An ArrayRef defined by the return from parse.
 
 #### italic
 
 A set of elements that must be represented as italic text.
 
-outputAn ArrayRef defined by the return from parse.
+- output
+
+    An ArrayRef defined by the return from parse.
 
 #### bold\_and\_italic
 
 A set of elements that must be represented as bold and italic text.
 
-outputAn ArrayRef defined by the return from parse.
+- output
+
+    An ArrayRef defined by the return from parse.
 
 #### unordered\_list
 
 A bullet point list.
 
-outputA ArrayRef of HashRefs from the type list\_element.
+- output
+
+    A ArrayRef of HashRefs from the type list\_element.
 
 #### list\_element
 
 An element in a list, this element must not appear outside of the output element of a list.
 
-outputAn ArrayRef defined by the return from parse.
+- output
+
+    An ArrayRef defined by the return from parse.
 
 #### link
 
 An URL or a link to other Wiki Article.
 
-linkThe String containing the URL or link to other Wiki Article.
+- link
 
-titleThe text that should be used while showing this URL to point the user where it is going to be directed.
+    The String containing the URL or link to other Wiki Article.
+
+- title
+
+    The text that should be used while showing this URL to point the user where it is going to be directed.
 
 #### image
 
 An Image, PDF, or Video.
 
-linkWhere to find the File.
+- link
 
-captionWhat to show the user if the image is requested to explain to the user what he is seeing.
+    Where to find the File.
+
+- caption
+
+    What to show the user if the image is requested to explain to the user what he is seeing.
 
 optionsUndocumented by the moment.
 
@@ -153,3 +179,79 @@ version provided by the FSF or the GNU project.
 # SEE ALSO
 
 Look what is supported and how in the tests: [https://github.com/sergiotarxz/Perl-Wiki-JSON/tree/main/t](https://github.com/sergiotarxz/Perl-Wiki-JSON/tree/main/t)
+
+# POD ERRORS
+
+Hey! **The above document had some coding errors, which are explained below:**
+
+- Around line 1098:
+
+    '=item' outside of any '=over'
+
+- Around line 1106:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1110:
+
+    '=item' outside of any '=over'
+
+- Around line 1118:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1122:
+
+    '=item' outside of any '=over'
+
+- Around line 1126:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1130:
+
+    '=item' outside of any '=over'
+
+- Around line 1134:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1138:
+
+    '=item' outside of any '=over'
+
+- Around line 1142:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1146:
+
+    '=item' outside of any '=over'
+
+- Around line 1150:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1154:
+
+    '=item' outside of any '=over'
+
+- Around line 1158:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1162:
+
+    '=item' outside of any '=over'
+
+- Around line 1170:
+
+    You forgot a '=back' before '=head4'
+
+- Around line 1174:
+
+    '=item' outside of any '=over'
+
+- Around line 1182:
+
+    You forgot a '=back' before '=head6'

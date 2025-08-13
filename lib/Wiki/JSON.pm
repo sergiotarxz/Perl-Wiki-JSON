@@ -1095,11 +1095,11 @@ HashRefs can be classified by the key type which can be one of these:
 
 A header to be printed as h1..h6 in HTML, has the following fields:
 
-=head5 hx_level
+=item hx_level
 
 A number from 1 to 6 defining the header level.
 
-=head5 output
+=item output
 
 An ArrayRef defined by the return from parse.
 
@@ -1107,11 +1107,11 @@ An ArrayRef defined by the return from parse.
 
 A template thought for developer defined expansions of how some data shoudl be represented.
 
-=head5 template_name
+=item template_name
 
 The name of the template.
 
-=head5 output
+=item output
 
 An ArrayRef defined by the return from parse.
 
@@ -1119,7 +1119,7 @@ An ArrayRef defined by the return from parse.
 
 A set of elements that must be represented as bold text.
 
-=head5 output
+=item output
 
 An ArrayRef defined by the return from parse.
 
@@ -1127,7 +1127,7 @@ An ArrayRef defined by the return from parse.
 
 A set of elements that must be represented as italic text.
 
-=head5 output
+=item output
 
 An ArrayRef defined by the return from parse.
 
@@ -1135,7 +1135,7 @@ An ArrayRef defined by the return from parse.
 
 A set of elements that must be represented as bold and italic text.
 
-=head5 output
+=item output
 
 An ArrayRef defined by the return from parse.
 
@@ -1143,7 +1143,7 @@ An ArrayRef defined by the return from parse.
 
 A bullet point list.
 
-=head5 output
+=item output
 
 A ArrayRef of HashRefs from the type list_element.
 
@@ -1151,7 +1151,7 @@ A ArrayRef of HashRefs from the type list_element.
 
 An element in a list, this element must not appear outside of the output element of a list.
 
-=head5 output
+=item output
 
 An ArrayRef defined by the return from parse.
 
@@ -1159,11 +1159,11 @@ An ArrayRef defined by the return from parse.
 
 An URL or a link to other Wiki Article.
 
-=head5 link
+=item link
 
 The String containing the URL or link to other Wiki Article.
 
-=head5 title
+=item title
 
 The text that should be used while showing this URL to point the user where it is going to be directed.
 
@@ -1171,11 +1171,11 @@ The text that should be used while showing this URL to point the user where it i
 
 An Image, PDF, or Video.
 
-=head5 link
+=item link
 
 Where to find the File.
 
-=head5 caption
+=item caption
 
 What to show the user if the image is requested to explain to the user what he is seeing.
 
