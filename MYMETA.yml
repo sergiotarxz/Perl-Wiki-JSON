@@ -13,8 +13,9 @@ name: Wiki-JSON
 provides:
   Wiki::JSON:
     file: lib/Wiki/JSON.pm
-    version: v0.0.7
+    version: v0.0.8
 requires:
+  Const::Fast: '0'
   Cpanel::JSON::XS: '0'
   Data::Dumper: '0'
   Module::Build: '0'
@@ -22,5 +23,5 @@ requires:
   Path::Tiny: '0'
   Test::Most: '0'
   perl: v5.38.0
-version: v0.0.7
+version: v0.0.8
 x_serialization_backend: 'CPAN::Meta::YAML version 0.018'

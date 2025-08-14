@@ -16,6 +16,7 @@
    "prereqs" : {
       "runtime" : {
          "requires" : {
+            "Const::Fast" : 0,
             "Cpanel::JSON::XS" : 0,
             "Data::Dumper" : 0,
             "Module::Build" : 0,
@@ -29,10 +30,10 @@
    "provides" : {
       "Wiki::JSON" : {
          "file" : "lib/Wiki/JSON.pm",
-         "version" : "v0.0.7"
+         "version" : "v0.0.8"
       }
    },
    "release_status" : "stable",
-   "version" : "v0.0.7",
+   "version" : "v0.0.8",
    "x_serialization_backend" : "JSON::PP version 4.16"
 }
