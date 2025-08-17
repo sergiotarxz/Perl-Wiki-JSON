@@ -16,11 +16,11 @@ const my $MINIMUM_LINK_SEARCH                                   => 3;
 const my $MINIMUM_TEMPLATE_SEARCH                               => 3;
 const my $LIST_ELEMENT_DELIMITER                                => "\n* ";
 
-has used => (is => 'rw', default => sub {0});
-has current_list_output => (is => 'rw');
+has used                => ( is => 'rw', default => sub { 0 } );
+has current_list_output => ( is => 'rw' );
 
 sub parse( $self, $wiki_text ) {
-    if ($self->used) {
+    if ( $self->used ) {
         die 'Parser already used';
     }
     my @output;
@@ -46,9 +46,7 @@ sub _break_lines_template( $self, $output, $buffer, $current_char, $i ) {
     return ( 0, $buffer, $i );
 }
 
-sub _break_lines( $self, $output, $buffer, $i, $current_char,
-    $options )
-{
+sub _break_lines( $self, $output, $buffer, $i, $current_char, $options ) {
     if ( $options->{is_template} ) {
         return $self->_break_lines_template( $output, $buffer, $current_char,
             $i );
@@ -77,79 +75,79 @@ sub _if_interrupted( $self, $output, $buffer, $options ) {
         push @$output, $buffer;
         $buffer = '';
     }
-    return ( $buffer  );
+    return ($buffer);
 }
 
-sub _insert_list_element_never_appending( $self, $output, $buffer)
-{
+sub _insert_list_element_never_appending( $self, $output, $buffer ) {
     push @$output, { type => 'list_element', output => [$buffer] };
-    $self->current_list_output($output->[-1]{output});
-    $buffer              = '';
-    return ( $buffer );
+    $self->current_list_output( $output->[-1]{output} );
+    $buffer = '';
+    return ($buffer);
 }
 
-sub _if_interrupted_unordered_list( $self, $output, $buffer,
-    $options )
-{
+sub _if_interrupted_unordered_list( $self, $output, $buffer, $options ) {
     if ( length $buffer ) {
-        ( $buffer ) =
-          $self->_insert_list_element_never_appending( $output, $buffer);
+        if ( $options->{br_found} || $options->{element_found} ) {
+            ($buffer) =
+              $self->_insert_list_appending_if_possible( $output, $buffer,
+                $options );
+        }
+        else {
+            ($buffer) =
+              $self->_insert_list_element_never_appending( $output, $buffer );
+        }
     }
     delete $options->{br_found};
+    delete $options->{element_found};
     delete $options->{is_unordered_list};
-    return ( $buffer  );
+    return ($buffer);
 }
 
-sub _insert_list_appending_if_possible( $self, $output, $buffer,
-    $options )
-{
+sub _insert_list_appending_if_possible( $self, $output, $buffer, $options ) {
     if ( defined $self->current_list_output ) {
         push $self->current_list_output->@*, $buffer;
         $buffer = '';
-        return ( $buffer );
+        return ($buffer);
     }
-    ( $buffer ) =
-      $self->_insert_list_element_never_appending( $output, $buffer,
-         );
+    ($buffer) =
+      $self->_insert_list_element_never_appending( $output, $buffer, );
     return ( $buffer, );
 }
 
 sub _insert_new_list_element_after_asterisk( $self, $output, $buffer, $i,
-     $options )
+    $options )
 {
     my $searched    = $LIST_ELEMENT_DELIMITER;
     my $size_search = length $searched;
     if ( length $buffer ) {
         if ( $options->{'br_found'} || $options->{element_found} ) {
             say 'happened';
-            ( $buffer ) =
+            ($buffer) =
               $self->_insert_list_appending_if_possible( $output, $buffer,
-                 $options );
+                $options );
             $options->{element_found} = 0;
         }
         else {
-            ( $buffer ) =
-              $self->_insert_list_element_never_appending( $output, $buffer,
-                 );
+            ($buffer) =
+              $self->_insert_list_element_never_appending( $output, $buffer, );
         }
     }
     delete $options->{br_found};
+    delete $options->{element_found};
     $buffer = '';
     $i += $size_search;
     return ( $i, $buffer, );
 }
 
 sub _needs_interruption( $self, $output, $buffer, $wiki_text, $i, $interrupt,
-     $options )
+    $options )
 {
     my $new_i;
     my $needs_interruption;
     $new_i =
       $self->_search_interrupt( $output, $buffer, $wiki_text, $i, $interrupt );
     if ( defined $new_i ) {
-        ( $buffer,  ) =
-          $self->_if_interrupted( $output, $buffer, 
-            $options );
+        ( $buffer, ) = $self->_if_interrupted( $output, $buffer, $options );
         $needs_interruption = 1;
         return ( $needs_interruption, $new_i, $buffer );
     }
@@ -157,22 +155,22 @@ sub _needs_interruption( $self, $output, $buffer, $wiki_text, $i, $interrupt,
 }
 
 sub _unordered_list_pre_syntax_parsing_newline_logic( $self, $output, $buffer,
-    $wiki_text,  $i, $options )
+    $wiki_text, $i, $options )
 {
     if ( !$options->{is_unordered_list} ) {
-        return ( $i, $buffer,  );
+        return ( $i, $buffer, );
     }
-    ( $i, $buffer,  ) =
+    ( $i, $buffer, ) =
       $self->_unordered_list_pre_syntax_parsing_newline_logic_real_line(
-        $output, $buffer, $wiki_text, $i,  $options );
-    ( $i, $buffer,  ) =
+        $output, $buffer, $wiki_text, $i, $options );
+    ( $i, $buffer, ) =
       $self->_unordered_list_pre_syntax_parsing_newline_logic_br( $output,
-        $buffer, $wiki_text, $i,  $options );
-    return ( $i, $buffer,  );
+        $buffer, $wiki_text, $i, $options );
+    return ( $i, $buffer, );
 }
 
 sub _unordered_list_pre_syntax_parsing_newline_logic_br( $self, $output,
-    $buffer, $wiki_text, $i,  $options )
+    $buffer, $wiki_text, $i, $options )
 {
     my $searched    = '<br>';
     my $size_search = length $searched;
@@ -180,12 +178,12 @@ sub _unordered_list_pre_syntax_parsing_newline_logic_br( $self, $output,
     if ( $last_word eq $searched ) {
         $options->{'br_found'} = 1;
         if ( length $buffer ) {
-            if ( defined  ) {
+            if ( defined $self->current_list_output ) {
                 push $self->current_list_output->@*, $buffer;
             }
             else {
                 push @$output, { type => 'list_element', output => [$buffer] };
-                $self->current_list_output($output->[-1]{output});
+                $self->current_list_output( $output->[-1]{output} );
             }
         }
         $buffer = '';
@@ -201,7 +199,7 @@ sub _unordered_list_pre_syntax_parsing_newline_logic_real_line( $self, $output,
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
     if ( $last_word eq $searched ) {
-        ( $i, $buffer  ) =
+        ( $i, $buffer ) =
           $self->_insert_new_list_element_after_asterisk( $output,
             $buffer, $i, $options );
     }
@@ -216,31 +214,28 @@ sub _parse_in_array_pre_char_checks( $self, $output, $buffer, $wiki_text, $i,
       $self->_needs_interruption( $output, $buffer, $wiki_text, $i,
         $interrupt, $options );
     if ($needs_interruption) {
-        return ( $needs_interruption, $buffer, $new_i,  );
+        return ( $needs_interruption, $buffer, $new_i, );
     }
-    ( $i, $buffer,  ) =
+    ( $i, $buffer, ) =
       $self->_unordered_list_pre_syntax_parsing_newline_logic( $output,
-        $buffer, $wiki_text,  $i, $options );
-    return ( $needs_interruption, $buffer, $i,  );
+        $buffer, $wiki_text, $i, $options );
+    return ( $needs_interruption, $buffer, $i, );
 }
 
 sub _parse_in_array_pre_new_element_parsing( $self, $output, $buffer,
-    $wiki_text, $i, $interrupt,  $options )
+    $wiki_text, $i, $interrupt, $options )
 {
     my ( $needs_next, $needs_return, $current_char );
-    ( $needs_return, $buffer, $i,  ) =
+    ( $needs_return, $buffer, $i, ) =
       $self->_parse_in_array_pre_char_checks( $output, $buffer, $wiki_text, $i,
-        $interrupt,  $options );
+        $interrupt, $options );
     if ($needs_return) {
-        return ( $needs_next, $needs_return, $i, $buffer, $current_char,
-             );
+        return ( $needs_next, $needs_return, $i, $buffer, $current_char, );
     }
     $current_char = substr $wiki_text, $i, 1;
     ( $needs_next, $buffer, $i ) =
-      $self->_break_lines( $output, $buffer, $i, $current_char,
-        $options,  );
-    return ( $needs_next, $needs_return, $i, $buffer, $current_char,
-         );
+      $self->_break_lines( $output, $buffer, $i, $current_char, $options, );
+    return ( $needs_next, $needs_return, $i, $buffer, $current_char, );
 }
 
 sub _parse_in_array_search_new_elements( $self, $output, $buffer, $wiki_text,
@@ -299,11 +294,9 @@ sub _parse_in_array(
 {
     for ( ; $i < length $wiki_text ; $i++ ) {
         my ( $needs_next, $needs_return, $current_char );
-        (
-            $needs_next, $needs_return, $i, $buffer, $current_char,
-          )
-          = $self->_parse_in_array_pre_new_element_parsing( $output, $buffer,
-            $wiki_text, $i, $interrupt,  $options );
+        ( $needs_next, $needs_return, $i, $buffer, $current_char, ) =
+          $self->_parse_in_array_pre_new_element_parsing( $output, $buffer,
+            $wiki_text, $i, $interrupt, $options );
         if ($needs_next) {
             next;
         }
@@ -321,10 +314,11 @@ sub _parse_in_array(
     if ( !$options->{is_nowiki} && length $buffer ) {
         {
             if ( $options->{is_unordered_list} ) {
-                if ( length $buffer ) {
-                    push @$output,
-                      { type => 'list_element', output => [$buffer] };
+                if ($options->{element_found} || $options->{br_found}) {
+                    ($buffer) = $self->_insert_list_appending_if_possible( $output, $buffer, $options);
+                    next;
                 }
+                ($buffer) = $self->_insert_list_element_never_appending( $output, $buffer );
                 next;
             }
             push @$output, $buffer;
@@ -456,7 +450,7 @@ sub _save_before_new_element( $self, $output, $buffer, $options ) {
         return ( $output, $buffer );
     }
     if ( $options->{is_unordered_list} ) {
-        
+
         push @$output, { type => 'list_element', output => [] };
         $output = $output->[-1]{output};
         $self->current_list_output($output);
@@ -1054,7 +1048,7 @@ sub _try_parse_link( $self, $output, $wiki_text, $buffer, $i, $options ) {
     };
     push @$output, $template;
     $buffer = '';
-    $i+=1;
+    $i += 1;
     return ( 1, $i, $buffer );
 }
 
