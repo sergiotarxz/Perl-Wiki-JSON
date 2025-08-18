@@ -1,3 +1,6 @@
+0.0.20 Mon Aug 18 09:15:10 2025 +0200
+    - Avoiding entirely empty text
+
 0.0.19 Mon Aug 18 07:02:10 2025 +0200
     - signatures module ditched
 
