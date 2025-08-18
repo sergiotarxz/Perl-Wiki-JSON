@@ -1,3 +1,6 @@
+0.0.15 Mon Aug 18 03:51:45 2025 +0200
+    - Improving Changelog
+
 0.0.14 Mon Aug 18 03:46:01 2025 +0200
     - Removing executable flag Build.PL
 
@@ -6,6 +9,3 @@
 
 0.0.12 Sun Aug 17 16:18:39 2025 +0200
     - Testing further lists and fixing errors related to element expansion inside of the same line of a list.
-
-0.0.15 Mon Aug 18 03:51:45 2025 +0200
-    - Improving Changelog
