@@ -25,4 +25,5 @@ perl -e '
     say "Version $version Present";
 ' || error
 pod2markdown < lib/Wiki/JSON.pm > README.md || error
+pod2markdown < lib/Wiki/JSON/Contributing.pm > CONTRIBUTING.md || error
 ./Build dist
