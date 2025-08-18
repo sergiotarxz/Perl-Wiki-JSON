@@ -1,6 +1,6 @@
 package Wiki::JSON::Parser;
 
-use v5.38.2;
+use v5.16.3;
 
 use strict;
 use warnings;
@@ -19,7 +19,8 @@ const my $LIST_ELEMENT_DELIMITER                                => "\n* ";
 has used                => ( is => 'rw', default => sub { 0 } );
 has current_list_output => ( is => 'rw' );
 
-sub parse( $self, $wiki_text ) {
+sub parse {
+    my ( $self, $wiki_text ) = @_;
     if ( $self->used ) {
         die 'Parser already used';
     }
@@ -29,7 +30,8 @@ sub parse( $self, $wiki_text ) {
     return \@output;
 }
 
-sub _search_interrupt( $self, $output, $buffer, $wiki_text, $i, $interrupt ) {
+sub _search_interrupt {
+    my ( $self, $output, $buffer, $wiki_text, $i, $interrupt ) = @_;
     my $new_i = $interrupt->( $wiki_text, $i );
     if ( !defined $new_i ) {
         return;
@@ -38,7 +40,8 @@ sub _search_interrupt( $self, $output, $buffer, $wiki_text, $i, $interrupt ) {
     return $i;
 }
 
-sub _break_lines_template( $self, $output, $buffer, $current_char, $i ) {
+sub _break_lines_template {
+    my ( $self, $output, $buffer, $current_char, $i ) = @_;
     if ( $current_char eq "|" ) {
         push @$output, $buffer;
         return ( 1, '', $i );
@@ -46,7 +49,8 @@ sub _break_lines_template( $self, $output, $buffer, $current_char, $i ) {
     return ( 0, $buffer, $i );
 }
 
-sub _break_lines( $self, $output, $buffer, $i, $current_char, $options ) {
+sub _break_lines {
+    my ( $self, $output, $buffer, $i, $current_char, $options ) = @_;
     if ( $options->{is_template} ) {
         return $self->_break_lines_template( $output, $buffer, $current_char,
             $i );
@@ -58,7 +62,8 @@ sub _break_lines( $self, $output, $buffer, $i, $current_char, $options ) {
         $i );
 }
 
-sub _break_lines_on_newline( $self, $output, $buffer, $current_char, $i ) {
+sub _break_lines_on_newline {
+    my ( $self, $output, $buffer, $current_char, $i ) = @_;
     if ( $current_char eq "\n" ) {
         push @$output, $buffer;
         return ( 1, '', $i );
@@ -66,7 +71,8 @@ sub _break_lines_on_newline( $self, $output, $buffer, $current_char, $i ) {
     return ( 0, $buffer, $i );
 }
 
-sub _if_interrupted( $self, $output, $buffer, $options ) {
+sub _if_interrupted {
+    my ( $self, $output, $buffer, $options ) = @_;
     if ( $options->{is_unordered_list} ) {
         return $self->_if_interrupted_unordered_list( $output, $buffer,
             $options );
@@ -78,14 +84,16 @@ sub _if_interrupted( $self, $output, $buffer, $options ) {
     return ($buffer);
 }
 
-sub _insert_list_element_never_appending( $self, $output, $buffer ) {
+sub _insert_list_element_never_appending {
+    my ( $self, $output, $buffer ) = @_;
     push @$output, { type => 'list_element', output => [$buffer] };
     $self->current_list_output( $output->[-1]{output} );
     $buffer = '';
     return ($buffer);
 }
 
-sub _if_interrupted_unordered_list( $self, $output, $buffer, $options ) {
+sub _if_interrupted_unordered_list {
+    my ( $self, $output, $buffer, $options ) = @_;
     if ( length $buffer ) {
         if ( $options->{br_found} || $options->{element_found} ) {
             ($buffer) =
@@ -103,9 +111,10 @@ sub _if_interrupted_unordered_list( $self, $output, $buffer, $options ) {
     return ($buffer);
 }
 
-sub _insert_list_appending_if_possible( $self, $output, $buffer, $options ) {
+sub _insert_list_appending_if_possible {
+    my ( $self, $output, $buffer, $options ) = @_;
     if ( defined $self->current_list_output ) {
-        push $self->current_list_output->@*, $buffer;
+        push @{$self->current_list_output}, $buffer;
         $buffer = '';
         return ($buffer);
     }
@@ -114,9 +123,8 @@ sub _insert_list_appending_if_possible( $self, $output, $buffer, $options ) {
     return ( $buffer, );
 }
 
-sub _insert_new_list_element_after_asterisk( $self, $output, $buffer, $i,
-    $options )
-{
+sub _insert_new_list_element_after_asterisk {
+    my ( $self, $output, $buffer, $i, $options ) = @_;
     my $searched    = $LIST_ELEMENT_DELIMITER;
     my $size_search = length $searched;
     if ( length $buffer ) {
@@ -139,9 +147,8 @@ sub _insert_new_list_element_after_asterisk( $self, $output, $buffer, $i,
     return ( $i, $buffer, );
 }
 
-sub _needs_interruption( $self, $output, $buffer, $wiki_text, $i, $interrupt,
-    $options )
-{
+sub _needs_interruption {
+    my ( $self, $output, $buffer, $wiki_text, $i, $interrupt, $options ) = @_;
     my $new_i;
     my $needs_interruption;
     $new_i =
@@ -154,9 +161,8 @@ sub _needs_interruption( $self, $output, $buffer, $wiki_text, $i, $interrupt,
     return ( $needs_interruption, $i, $buffer );
 }
 
-sub _unordered_list_pre_syntax_parsing_newline_logic( $self, $output, $buffer,
-    $wiki_text, $i, $options )
-{
+sub _unordered_list_pre_syntax_parsing_newline_logic {
+    my ( $self, $output, $buffer, $wiki_text, $i, $options ) = @_;
     if ( !$options->{is_unordered_list} ) {
         return ( $i, $buffer, );
     }
@@ -169,9 +175,8 @@ sub _unordered_list_pre_syntax_parsing_newline_logic( $self, $output, $buffer,
     return ( $i, $buffer, );
 }
 
-sub _unordered_list_pre_syntax_parsing_newline_logic_br( $self, $output,
-    $buffer, $wiki_text, $i, $options )
-{
+sub _unordered_list_pre_syntax_parsing_newline_logic_br {
+    my ( $self, $output, $buffer, $wiki_text, $i, $options ) = @_;
     my $searched    = '<br>';
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -179,7 +184,7 @@ sub _unordered_list_pre_syntax_parsing_newline_logic_br( $self, $output,
         $options->{'br_found'} = 1;
         if ( length $buffer ) {
             if ( defined $self->current_list_output ) {
-                push $self->current_list_output->@*, $buffer;
+                push @{$self->current_list_output}, $buffer;
             }
             else {
                 push @$output, { type => 'list_element', output => [$buffer] };
@@ -192,9 +197,8 @@ sub _unordered_list_pre_syntax_parsing_newline_logic_br( $self, $output,
     return ( $i, $buffer );
 }
 
-sub _unordered_list_pre_syntax_parsing_newline_logic_real_line( $self, $output,
-    $buffer, $wiki_text, $i, $options )
-{
+sub _unordered_list_pre_syntax_parsing_newline_logic_real_line {
+    my ( $self, $output, $buffer, $wiki_text, $i, $options ) = @_;
     my $searched    = $LIST_ELEMENT_DELIMITER;
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -206,9 +210,8 @@ sub _unordered_list_pre_syntax_parsing_newline_logic_real_line( $self, $output,
     return ( $i, $buffer );
 }
 
-sub _parse_in_array_pre_char_checks( $self, $output, $buffer, $wiki_text, $i,
-    $interrupt, $options )
-{
+sub _parse_in_array_pre_char_checks {
+    my ( $self, $output, $buffer, $wiki_text, $i, $interrupt, $options ) = @_;
     my ( $needs_interruption, $new_i );
     ( $needs_interruption, $new_i, $buffer ) =
       $self->_needs_interruption( $output, $buffer, $wiki_text, $i,
@@ -222,9 +225,8 @@ sub _parse_in_array_pre_char_checks( $self, $output, $buffer, $wiki_text, $i,
     return ( $needs_interruption, $buffer, $i, );
 }
 
-sub _parse_in_array_pre_new_element_parsing( $self, $output, $buffer,
-    $wiki_text, $i, $interrupt, $options )
-{
+sub _parse_in_array_pre_new_element_parsing {
+    my ( $self, $output, $buffer, $wiki_text, $i, $interrupt, $options ) = @_;
     my ( $needs_next, $needs_return, $current_char );
     ( $needs_return, $buffer, $i, ) =
       $self->_parse_in_array_pre_char_checks( $output, $buffer, $wiki_text, $i,
@@ -238,9 +240,8 @@ sub _parse_in_array_pre_new_element_parsing( $self, $output, $buffer,
     return ( $needs_next, $needs_return, $i, $buffer, $current_char, );
 }
 
-sub _parse_in_array_search_new_elements( $self, $output, $buffer, $wiki_text,
-    $i, $options )
-{
+sub _parse_in_array_search_new_elements {
+    my ( $self, $output, $buffer, $wiki_text, $i, $options ) = @_;
     my ($needs_next);
     if ( !$options->{is_nowiki} ) {
         {
@@ -285,13 +286,14 @@ sub _parse_in_array_search_new_elements( $self, $output, $buffer, $wiki_text,
     return ( $needs_next, $i, $buffer, );
 }
 
-sub _parse_in_array(
-    $self, $output, $wiki_text, $i = 0,
-    $buffer    = '',
-    $interrupt = sub { return; },
-    $options   = {}
-  )
-{
+sub _parse_in_array {
+    my ( $self, $output, $wiki_text, $i, $buffer, $interrupt, $options, ) = @_;
+
+    $i         //= 0;
+    $buffer    //= '';
+    $interrupt //= sub { return };
+    $options   //= {};
+
     for ( ; $i < length $wiki_text ; $i++ ) {
         my ( $needs_next, $needs_return, $current_char );
         ( $needs_next, $needs_return, $i, $buffer, $current_char, ) =
@@ -314,11 +316,15 @@ sub _parse_in_array(
     if ( !$options->{is_nowiki} && length $buffer ) {
         {
             if ( $options->{is_unordered_list} ) {
-                if ($options->{element_found} || $options->{br_found}) {
-                    ($buffer) = $self->_insert_list_appending_if_possible( $output, $buffer, $options);
+                if ( $options->{element_found} || $options->{br_found} ) {
+                    ($buffer) =
+                      $self->_insert_list_appending_if_possible( $output,
+                        $buffer, $options );
                     next;
                 }
-                ($buffer) = $self->_insert_list_element_never_appending( $output, $buffer );
+                ($buffer) =
+                  $self->_insert_list_element_never_appending( $output,
+                    $buffer );
                 next;
             }
             push @$output, $buffer;
@@ -328,7 +334,8 @@ sub _parse_in_array(
     return ( $i, $buffer );
 }
 
-sub _try_parse_nowiki( $self, $output, $wiki_text, $buffer, $i, $options ) {
+sub _try_parse_nowiki {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     my $tag       = '<nowiki>';
     my $next_word = substr $wiki_text, $i, length $tag;
     if ( $tag ne $next_word ) {
@@ -339,7 +346,8 @@ sub _try_parse_nowiki( $self, $output, $wiki_text, $buffer, $i, $options ) {
         $output,
         $wiki_text,
         $i, $buffer,
-        sub ( $wiki_text, $i ) {
+        sub {
+            my ( $wiki_text, $i ) = @_;
             return $self->_try_interrupt_nowiki( $wiki_text, $i );
         },
         { is_nowiki => 1 }
@@ -347,7 +355,8 @@ sub _try_parse_nowiki( $self, $output, $wiki_text, $buffer, $i, $options ) {
     return ( 1, $i, $buffer );
 }
 
-sub _try_interrupt_nowiki( $self, $wiki_text, $i ) {
+sub _try_interrupt_nowiki {
+    my ( $self, $wiki_text, $i ) = @_;
     my $tag       = '</nowiki>';
     my $next_word = substr $wiki_text, $i, length $tag;
     if ( $tag ne $next_word ) {
@@ -356,7 +365,8 @@ sub _try_interrupt_nowiki( $self, $wiki_text, $i ) {
     return $i + ( length $tag ) - 1;
 }
 
-sub _try_parse_italic( $self, $output, $wiki_text, $buffer, $i, $options ) {
+sub _try_parse_italic {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     my $searched    = q/''/;
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -383,7 +393,8 @@ sub _try_parse_italic( $self, $output, $wiki_text, $buffer, $i, $options ) {
 
 }
 
-sub _check_bold_and_italic_in_single_step( $self, $wiki_text, $i ) {
+sub _check_bold_and_italic_in_single_step {
+    my ( $self, $wiki_text, $i ) = @_;
     my $searched    = q/'''''/;
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -393,9 +404,8 @@ sub _check_bold_and_italic_in_single_step( $self, $wiki_text, $i ) {
     return;
 }
 
-sub _try_parse_unordered_list( $self, $output, $wiki_text, $buffer, $i,
-    $options )
-{
+sub _try_parse_unordered_list {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     if ( 0 < length $buffer ) {
         return ( 0, $i, $buffer, $options );
     }
@@ -412,7 +422,8 @@ sub _try_parse_unordered_list( $self, $output, $wiki_text, $buffer, $i,
         $element->{output},
         $wiki_text,
         $i, $buffer,
-        sub ( $wiki_text, $i ) {
+        sub {
+            my ( $wiki_text, $i ) = @_;
             if ( $self->_try_discard_interrupt_list( $wiki_text, $i ) ) {
                 return;
             }
@@ -424,7 +435,8 @@ sub _try_parse_unordered_list( $self, $output, $wiki_text, $buffer, $i,
     return ( 1, $i, $buffer, $options );
 }
 
-sub _try_interrupt_list( $self, $wiki_text, $i ) {
+sub _try_interrupt_list {
+    my ( $self, $wiki_text, $i ) = @_;
     my $searched    = $LIST_ELEMENT_DELIMITER;
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -435,7 +447,8 @@ sub _try_interrupt_list( $self, $wiki_text, $i ) {
     return;
 }
 
-sub _try_discard_interrupt_list( $self, $wiki_text, $i ) {
+sub _try_discard_interrupt_list {
+    my ( $self, $wiki_text, $i ) = @_;
     my $searched    = "\n";
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -445,7 +458,8 @@ sub _try_discard_interrupt_list( $self, $wiki_text, $i ) {
     return 0;
 }
 
-sub _save_before_new_element( $self, $output, $buffer, $options ) {
+sub _save_before_new_element {
+    my ( $self, $output, $buffer, $options ) = @_;
     if ( !length $buffer ) {
         return ( $output, $buffer );
     }
@@ -463,7 +477,8 @@ sub _save_before_new_element( $self, $output, $buffer, $options ) {
     return ( $output, $buffer );
 }
 
-sub _try_parse_bold( $self, $output, $wiki_text, $buffer, $i, $options ) {
+sub _try_parse_bold {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     my $searched    = q/'''/;
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -489,7 +504,8 @@ sub _try_parse_bold( $self, $output, $wiki_text, $buffer, $i, $options ) {
     return @return;
 }
 
-sub _calculate_bold_or_italic_type( $self, $element, $options ) {
+sub _calculate_bold_or_italic_type {
+    my ( $self, $element, $options ) = @_;
     if ( $options->{is_italic} ) {
         $element->{type} = 'italic';
     }
@@ -503,9 +519,8 @@ sub _calculate_bold_or_italic_type( $self, $element, $options ) {
     return $is_bold_and_italic;
 }
 
-sub _recurse_pending_bold_or_italic( $self, $output, $wiki_text, $i, $buffer,
-    $options )
-{
+sub _recurse_pending_bold_or_italic {
+    my ( $self, $output, $wiki_text, $i, $buffer, $options ) = @_;
     my $element = { output => [], };
     my $is_bold_and_italic =
       $self->_calculate_bold_or_italic_type( $element, $options );
@@ -518,7 +533,8 @@ sub _recurse_pending_bold_or_italic( $self, $output, $wiki_text, $i, $buffer,
         $element->{output},
         $wiki_text,
         $i, $buffer,
-        sub ( $wiki_text, $i ) {
+        sub {
+            my ( $wiki_text, $i ) = @_;
             if ($is_bold_and_italic) {
                 my $searched    = q/'''''/;
                 my $size_search = length $searched;
@@ -567,9 +583,8 @@ sub _recurse_pending_bold_or_italic( $self, $output, $wiki_text, $i, $buffer,
     return @return;
 }
 
-sub _try_parse_image_find_url_size( $self,
-    $wiki_text, $valid_characters, $i, $size_search )
-{
+sub _try_parse_image_find_url_size {
+    my ( $self, $wiki_text, $valid_characters, $i, $size_search ) = @_;
     for ( $size_search = $size_search + 1 ; ; $size_search++ ) {
         my $last_word = substr $wiki_text, $i, $size_search;
         if ( $last_word !~ /^\[\[File:$valid_characters+$/x ) {
@@ -579,7 +594,8 @@ sub _try_parse_image_find_url_size( $self,
     return $size_search;
 }
 
-sub _try_parse_image( $self, $output, $wiki_text, $buffer, $i, $options ) {
+sub _try_parse_image {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     my $searched         = '[[File:';
     my $size_search      = length $searched;
     my $orig_size_search = $size_search;
@@ -664,9 +680,8 @@ sub _try_parse_image( $self, $output, $wiki_text, $buffer, $i, $options ) {
     return ( 1, $i, $buffer );
 }
 
-sub _try_parse_image_parse_end( $self, $wiki_text, $tmp_buffer, $i, $caption,
-    $element_options )
-{
+sub _try_parse_image_parse_end {
+    my ( $self, $wiki_text, $tmp_buffer, $i, $caption, $element_options ) = @_;
     my $searched    = ']]';
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -680,9 +695,8 @@ sub _try_parse_image_parse_end( $self, $wiki_text, $tmp_buffer, $i, $caption,
     return ( 0, $caption, $tmp_buffer );
 }
 
-sub _try_parse_image_get_url( $self, $wiki_text, $valid_characters, $i,
-    $size_search )
-{
+sub _try_parse_image_get_url {
+    my ( $self, $wiki_text, $valid_characters, $i, $size_search ) = @_;
     my $last_word = substr $wiki_text, $i, $size_search + 1;
     if ( $last_word =~ /^\[\[File:($valid_characters+)\|/x ) {
         return ( 1, $1 );
@@ -690,7 +704,8 @@ sub _try_parse_image_get_url( $self, $wiki_text, $valid_characters, $i,
     return (0);
 }
 
-sub _is_defined_image_format_exclusive( $self, $element_options ) {
+sub _is_defined_image_format_exclusive {
+    my ( $self, $element_options ) = @_;
     for my $option (qw/frameless frame framed thumb thumbnail/) {
         if ( defined $element_options->{format}{$option} ) {
             return 1;
@@ -699,9 +714,8 @@ sub _is_defined_image_format_exclusive( $self, $element_options ) {
     return;
 }
 
-sub _try_parse_link_component_formats ( $self, $tmp_buffer, $caption,
-    $element_options )
-{
+sub _try_parse_link_component_formats {
+    my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     if ( $tmp_buffer =~ /^border$/x ) {
         $element_options->{format}{border} = 1;
         return $caption;
@@ -739,9 +753,8 @@ sub _try_parse_link_component_formats ( $self, $tmp_buffer, $caption,
     return;
 }
 
-sub _try_parse_link_component_halign( $self, $tmp_buffer, $caption,
-    $element_options )
-{
+sub _try_parse_link_component_halign {
+    my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     if ( $tmp_buffer =~ /^left$/x ) {
         return $caption
           if $self->_is_defined_image_halign_exclusive($element_options);
@@ -769,9 +782,8 @@ sub _try_parse_link_component_halign( $self, $tmp_buffer, $caption,
     return;
 }
 
-sub _try_parse_link_component_valign( $self, $tmp_buffer, $caption,
-    $element_options )
-{
+sub _try_parse_link_component_valign {
+    my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     if ( $tmp_buffer =~ /^baseline$/x ) {
         return $caption
           if $self->_is_defined_image_valign_exclusive($element_options);
@@ -823,9 +835,8 @@ sub _try_parse_link_component_valign( $self, $tmp_buffer, $caption,
     return;
 }
 
-sub _try_parse_link_component_extra_options_video_controls( $self, $tmp_buffer,
-    $caption, $element_options )
-{
+sub _try_parse_link_component_extra_options_video_controls {
+    my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     if ( my ($thumbtime) =
         $tmp_buffer =~ /^thumbtime=((?:\d+:)?(?:\d+:)\d+)$/x )
     {
@@ -851,9 +862,8 @@ sub _try_parse_link_component_extra_options_video_controls( $self, $tmp_buffer,
     return;
 }
 
-sub _try_parse_link_component_extra_options( $self, $tmp_buffer, $caption,
-    $element_options )
-{
+sub _try_parse_link_component_extra_options {
+    my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     if ( my ($link) = $tmp_buffer =~ /^link=(.*)$/x ) {
         return $caption if defined $element_options->{link};
         $element_options->{link} = $link;
@@ -890,8 +900,8 @@ sub _try_parse_link_component_extra_options( $self, $tmp_buffer, $caption,
     return;
 }
 
-sub _try_parse_link_component( $self, $tmp_buffer, $caption, $element_options )
-{
+sub _try_parse_link_component {
+    my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     my $return_caption_format =
       $self->_try_parse_link_component_formats( $tmp_buffer, $caption,
         $element_options );
@@ -921,21 +931,24 @@ sub _try_parse_link_component( $self, $tmp_buffer, $caption, $element_options )
     return $caption;
 }
 
-sub _is_defined_image_valign_exclusive( $self, $element_options ) {
+sub _is_defined_image_valign_exclusive {
+    my ( $self, $element_options ) = @_;
     if ( defined $element_options->{valign} ) {
         return 1;
     }
     return 0;
 }
 
-sub _is_defined_image_halign_exclusive( $self, $element_options ) {
+sub _is_defined_image_halign_exclusive {
+    my ( $self, $element_options ) = @_;
     if ( defined $element_options->{halign} ) {
         return 1;
     }
     return 0;
 }
 
-sub _is_defined_image_resizing_exclusive( $self, $element_options ) {
+sub _is_defined_image_resizing_exclusive {
+    my ( $self, $element_options ) = @_;
     for my $option (qw/width height upright/) {
         if ( defined $element_options->{resize}{$option} ) {
             return 1;
@@ -944,7 +957,8 @@ sub _is_defined_image_resizing_exclusive( $self, $element_options ) {
     return 0;
 }
 
-sub _try_parse_image_resizing( $self, $tmp_buffer, $element_options ) {
+sub _try_parse_image_resizing {
+    my ( $self, $tmp_buffer, $element_options ) = @_;
     if ( my ($width) = $tmp_buffer =~ /^(\d+)(?:\ |)px$/x ) {
         return 1
           if $self->_is_defined_image_resizing_exclusive($element_options);
@@ -973,7 +987,8 @@ sub _try_parse_image_resizing( $self, $tmp_buffer, $element_options ) {
     return 0;
 }
 
-sub _try_parse_link_find_size_url( $self, $wiki_text, $valid_characters, $i ) {
+sub _try_parse_link_find_size_url {
+    my ( $self, $wiki_text, $valid_characters, $i ) = @_;
     my $size_search;
     for ( $size_search = $MINIMUM_LINK_SEARCH ; ; $size_search++ ) {
         my $last_word = substr $wiki_text, $i, $size_search;
@@ -984,9 +999,8 @@ sub _try_parse_link_find_size_url( $self, $wiki_text, $valid_characters, $i ) {
     return $size_search;
 }
 
-sub _try_parse_link_try_determine_url( $self, $wiki_text, $valid_characters,
-    $i, $size_search )
-{
+sub _try_parse_link_try_determine_url {
+    my ( $self, $wiki_text, $valid_characters, $i, $size_search ) = @_;
     my $last_word = substr $wiki_text, $i, $size_search + 1;
     if ( $last_word =~ /^\[\[($valid_characters+)\|/x ) {
         return ( 1, $1 );
@@ -994,7 +1008,8 @@ sub _try_parse_link_try_determine_url( $self, $wiki_text, $valid_characters,
     return (0);
 }
 
-sub _try_parse_link( $self, $output, $wiki_text, $buffer, $i, $options ) {
+sub _try_parse_link {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     my $searched    = '[[';
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -1052,7 +1067,8 @@ sub _try_parse_link( $self, $output, $wiki_text, $buffer, $i, $options ) {
     return ( 1, $i, $buffer );
 }
 
-sub _try_parse_link_find_end_title( $self, $wiki_text, $i ) {
+sub _try_parse_link_find_end_title {
+    my ( $self, $wiki_text, $i ) = @_;
     my $searched    = ']]';
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -1062,7 +1078,8 @@ sub _try_parse_link_find_end_title( $self, $wiki_text, $i ) {
     return 0;
 }
 
-sub _try_parse_template_find_size_name_template( $self, $wiki_text, $i ) {
+sub _try_parse_template_find_size_name_template {
+    my ( $self, $wiki_text, $i ) = @_;
     my $size_search;
     for ( $size_search = $MINIMUM_TEMPLATE_SEARCH ; ; $size_search++ ) {
         my $last_word = substr $wiki_text, $i, $size_search;
@@ -1073,7 +1090,8 @@ sub _try_parse_template_find_size_name_template( $self, $wiki_text, $i ) {
     return $size_search;
 }
 
-sub _try_parse_template( $self, $output, $wiki_text, $buffer, $i, $options ) {
+sub _try_parse_template {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     my $searched    = '{{';
     my $size_search = length $searched;
     my $last_word   = substr $wiki_text, $i, $size_search;
@@ -1118,7 +1136,8 @@ sub _try_parse_template( $self, $output, $wiki_text, $buffer, $i, $options ) {
         $template->{output},
         $wiki_text,
         $i, $buffer,
-        sub ( $wiki_text, $i ) {
+        sub {
+            my ( $wiki_text, $i ) = @_;
             return $self->_try_parse_template_try_to_interrupt( $wiki_text,
                 $i );
         },
@@ -1128,7 +1147,8 @@ sub _try_parse_template( $self, $output, $wiki_text, $buffer, $i, $options ) {
     return ( 1, $i, $buffer );
 }
 
-sub _try_parse_template_try_to_interrupt( $self, $wiki_text, $i ) {
+sub _try_parse_template_try_to_interrupt {
+    my ( $self, $wiki_text, $i ) = @_;
     my $last_word = substr $wiki_text, $i, 2;
     if ( $last_word ne "}}" ) {
         return;
@@ -1136,8 +1156,8 @@ sub _try_parse_template_try_to_interrupt( $self, $wiki_text, $i ) {
     return $i + 1;
 }
 
-sub _try_parse_template_get_template_name( $self, $wiki_text, $i, $size_search )
-{
+sub _try_parse_template_get_template_name {
+    my ( $self, $wiki_text, $i, $size_search ) = @_;
     my $last_word = substr $wiki_text, $i, $size_search + 1;
     if ( $last_word =~ /^\{\{([a-zA-Z]+)\|/x ) {
         return ( 1, $1 );
@@ -1145,7 +1165,8 @@ sub _try_parse_template_get_template_name( $self, $wiki_text, $i, $size_search )
     return (0);
 }
 
-sub _try_parse_header( $self, $output, $wiki_text, $buffer, $i, $options ) {
+sub _try_parse_header {
+    my ( $self, $output, $wiki_text, $buffer, $i, $options ) = @_;
     my $last_char = substr $wiki_text, $i, 1;
     if ( $last_char ne '=' ) {
         return ( 0, $i, $buffer );
@@ -1178,7 +1199,8 @@ sub _try_parse_header( $self, $output, $wiki_text, $buffer, $i, $options ) {
         $header->{output},
         $wiki_text,
         $i, $buffer,
-        sub ( $wiki_text, $i ) {
+        sub {
+            my ( $wiki_text, $i ) = @_;
             my $char = substr $wiki_text, $i, 1;
             if ( $char eq "\n" ) {
                 return $i;
@@ -1199,7 +1221,7 @@ sub _try_parse_header( $self, $output, $wiki_text, $buffer, $i, $options ) {
         },
         { is_header => 1 }
     );
-    push $output->@*, $header;
+    push @$output, $header;
     return ( 1, $i, $buffer );
 }
 1;

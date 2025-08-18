@@ -18,7 +18,8 @@ my $build = Module::Build->new(
         'Cpanel::JSON::XS' => 0,
         'Path::Tiny'       => 0,
         'Const::Fast'      => 0,
-        'perl'             => 'v5.38.0',
+        'perl'             => 'v5.16.3',
+        'signatures' => 0,
     },
     script_files => [ 'scripts/wiki2json', ]
 );

@@ -1,6 +1,6 @@
 package Wiki::JSON;
 
-use v5.38.2;
+use v5.16.3;
 
 use strict;
 use warnings;
@@ -10,7 +10,7 @@ use Data::Dumper;
 use Const::Fast;
 use Wiki::JSON::Parser;
 
-our $VERSION = "0.0.12";
+our $VERSION = "0.0.13";
 
 const my $MAX_HX_SIZE                                           => 6;
 const my $EXTRA_CHARACTERS_BOLD_AND_ITALIC_WHEN_ITALIC          => 3;
@@ -19,7 +19,8 @@ const my $MINIMUM_LINK_SEARCH                                   => 3;
 const my $MINIMUM_TEMPLATE_SEARCH                               => 3;
 const my $LIST_ELEMENT_DELIMITER                                => "\n* ";
 
-sub parse( $self, $wiki_text ) {
+sub parse {
+    my ( $self, $wiki_text ) = @_;
     return Wiki::JSON::Parser->new->parse($wiki_text);
 }
 1;
@@ -232,7 +233,7 @@ Undocumented by the moment.
 
 =head1 DEPENDENCIES
 
-The module will pull all the dependencies it needs on install, the minimum supported Perl is v5.38.2.
+The module will pull all the dependencies it needs on install, the minimum supported Perl is v5.16.3, although latest versions are mostly tested for 5.38.2
 
 =head1 CONFIGURATION AND ENVIRONMENT
 

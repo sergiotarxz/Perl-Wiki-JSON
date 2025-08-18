@@ -1,4 +1,4 @@
-use v5.38.2;
+use v5.16.3;
 
 use strict;
 use warnings;
@@ -6,6 +6,7 @@ use warnings;
 use lib 'lib';
 
 use Test::Most;
+use signatures;
 
 use_ok 'Wiki::JSON';
 

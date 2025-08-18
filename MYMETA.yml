@@ -13,7 +13,7 @@ name: Wiki-JSON
 provides:
   Wiki::JSON:
     file: lib/Wiki/JSON.pm
-    version: v0.0.11
+    version: v0.0.12
   Wiki::JSON::Parser:
     file: lib/Wiki/JSON/Parser.pm
 requires:
@@ -24,6 +24,7 @@ requires:
   Moo: '0'
   Path::Tiny: '0'
   Test::Most: '0'
-  perl: v5.38.0
-version: v0.0.11
+  perl: v5.16.3
+  signatures: '0'
+version: v0.0.12
 x_serialization_backend: 'CPAN::Meta::YAML version 0.020'
