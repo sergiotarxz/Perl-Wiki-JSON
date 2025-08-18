@@ -13,7 +13,9 @@ name: Wiki-JSON
 provides:
   Wiki::JSON:
     file: lib/Wiki/JSON.pm
-    version: v0.0.20
+    version: v0.0.21
+  Wiki::JSON::Contributing:
+    file: lib/Wiki/JSON/Contributing.pm
   Wiki::JSON::Parser:
     file: lib/Wiki/JSON/Parser.pm
 requires:
@@ -26,5 +28,5 @@ requires:
   Test::Most: '0'
   perl: v5.16.3
 resources: {}
-version: v0.0.20
+version: v0.0.21
 x_serialization_backend: 'CPAN::Meta::YAML version 0.020'
