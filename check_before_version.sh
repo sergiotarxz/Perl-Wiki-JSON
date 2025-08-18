@@ -4,6 +4,11 @@ error() {
     exit 1;
 }
 
+perl Build.PL
+echo 'Installing deps current perl';
+perlbrew exec ./Build installdeps || error
+echo 'Installing deps minimum perl';
+perlbrew exec --with perl-5.16.3 ./Build installdeps || error
 echo "Testing current perl";
 perlbrew exec prove || error
 echo "Testing 5.16.3";
@@ -20,5 +25,4 @@ perl -e '
     say "Version $version Present";
 ' || error
 pod2markdown < lib/Wiki/JSON.pm > README.md || error
-perl Build.PL
 ./Build dist
