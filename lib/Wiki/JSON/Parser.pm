@@ -1221,6 +1221,22 @@ sub _try_parse_header {
         },
         { is_header => 1 }
     );
+    if (scalar @{$header->{output}}) {
+        if (!ref $header->{output}[0]) {
+            ($header->{output}[0]) = $header->{output}[0] =~ /^\s*(.*?)$/;
+            if (!$header->{output}[0]) {
+                @{$header->{output}} = splice @{$header->{output}}, 1;
+            }
+        }
+        my $last_index = -1 + scalar @{$header->{output}};
+        my $last_element = $header->{output}[$last_index];
+        if (defined $last_element && !ref $last_element) {
+            ($header->{output}[$last_index]) = $header->{output}[$last_index] =~ /^(.*?)\s*$/;
+            if (!$header->{output}[$last_index]) {
+                @{$header->{output}} = splice @{$header->{output}}, 0, $last_index;
+            }
+        }
+    }
     push @$output, $header;
     return ( 1, $i, $buffer );
 }

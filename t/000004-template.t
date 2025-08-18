@@ -43,13 +43,11 @@ use_ok 'Wiki::JSON';
         {
             'type'   => 'hx',
             'output' => [
-                ' ',
                 {
                     'output'        => [ 'hola', 'adios' ],
                     'type'          => 'template',
                     'template_name' => 'stub'
                 },
-                ' '
             ],
             'hx_level' => 3
         }
@@ -67,13 +65,13 @@ use_ok 'Wiki::JSON';
         {
             'type'   => 'hx',
             'output' => [
-                ' Hola: ',
+                'Hola: ',
                 {
                     'output'        => [ 'hola', 'adios' ],
                     'type'          => 'template',
                     'template_name' => 'stub'
                 },
-                ' :Mundo '
+                ' :Mundo'
             ],
             'hx_level' => 3
         }

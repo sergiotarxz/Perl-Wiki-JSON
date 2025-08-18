@@ -10,7 +10,7 @@ use Data::Dumper;
 use Const::Fast;
 use Wiki::JSON::Parser;
 
-our $VERSION = "0.0.16";
+our $VERSION = "0.0.17";
 
 const my $MAX_HX_SIZE                                           => 6;
 const my $EXTRA_CHARACTERS_BOLD_AND_ITALIC_WHEN_ITALIC          => 3;
@@ -57,12 +57,6 @@ Wiki::JSON - Parse wiki-like articles to a data-structure transformable to JSON.
     This is a link to a URL with an alias: [[https://example.com/cool-source.html|cool article]]
     This is a link to a Image [[File:https:/example.com/img.png|50x50px|frame|This is a caption]]
     EOF
-
-=head1 DESCRIPTION
-
-A parser for a subset of a mediawiki-like syntax, quirks include some
-supposedly inline elements are parsed multi-line like headers, templates*,
-italic and bolds.
 
 =head1 DESCRIPTION
 

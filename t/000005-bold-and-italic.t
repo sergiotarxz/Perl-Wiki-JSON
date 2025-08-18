@@ -112,7 +112,7 @@ and italic''' italic'': hola/
         {
             'hx_level' => 1,
             'output'   => [
-                ' hola: ',
+                'hola: ',
                 {
                     'type'   => 'bold_and_italic',
                     'output' => ['bold and italic']
@@ -122,7 +122,7 @@ and italic''' italic'': hola/
                     'output' => [
                         ' italic ',
                         {
-                            'output'   => [' hola'],
+                            'output'   => ['hola'],
                             'hx_level' => 1,
                             'type'     => 'hx'
                         }
