@@ -31,13 +31,13 @@
    "provides" : {
       "Wiki::JSON" : {
          "file" : "lib/Wiki/JSON.pm",
-         "version" : "v0.0.16"
+         "version" : "v0.0.17"
       },
       "Wiki::JSON::Parser" : {
          "file" : "lib/Wiki/JSON/Parser.pm"
       }
    },
    "release_status" : "stable",
-   "version" : "v0.0.16",
+   "version" : "v0.0.17",
    "x_serialization_backend" : "JSON::PP version 4.16"
 }

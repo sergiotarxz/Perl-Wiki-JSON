@@ -19,7 +19,6 @@ my $build = Module::Build->new(
         'Path::Tiny'       => 0,
         'Const::Fast'      => 0,
         'perl'             => 'v5.16.3',
-        'signatures'       => 0,
     },
     meta_add => {
         resources => {
