@@ -19,7 +19,20 @@ my $build = Module::Build->new(
         'Path::Tiny'       => 0,
         'Const::Fast'      => 0,
         'perl'             => 'v5.16.3',
-        'signatures' => 0,
+        'signatures'       => 0,
+    },
+    meta_add => {
+        resources => {
+            bugtracker => {
+                web => 'https://github.com/sergiotarxz/Perl-Wiki-JSON/issues',
+                mailto => 'sergioxz@cpan.org',
+            },
+            repository => {
+                url  => 'git://github.com/sergiotarxz/Perl-Wiki-JSON.git',
+                web  => 'https://github.com/sergiotarxz/Perl-Wiki-JSON',
+                type => 'git',
+            },
+        }
     },
     script_files => [ 'scripts/wiki2json', ]
 );

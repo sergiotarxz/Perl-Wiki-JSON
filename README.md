@@ -35,12 +35,6 @@ A parser for a subset of a mediawiki-like syntax, quirks include some
 supposedly inline elements are parsed multi-line like headers, templates\*,
 italic and bolds.
 
-# DESCRIPTION
-
-A parser for a subset of a mediawiki-like syntax, quirks include some
-supposedly inline elements are parsed multi-line like headers, templates\*,
-italic and bolds.
-
 Lists are only one level and not everything in mediawiki is supported by the
 moment.
 
