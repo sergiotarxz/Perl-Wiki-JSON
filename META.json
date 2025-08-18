@@ -35,7 +35,10 @@
    "provides" : {
       "Wiki::JSON" : {
          "file" : "lib/Wiki/JSON.pm",
-         "version" : "v0.0.20"
+         "version" : "v0.0.21"
+      },
+      "Wiki::JSON::Contributing" : {
+         "file" : "lib/Wiki/JSON/Contributing.pm"
       },
       "Wiki::JSON::Parser" : {
          "file" : "lib/Wiki/JSON/Parser.pm"
@@ -43,6 +46,6 @@
    },
    "release_status" : "stable",
    "resources" : {},
-   "version" : "v0.0.20",
+   "version" : "v0.0.21",
    "x_serialization_backend" : "JSON::PP version 4.16"
 }
