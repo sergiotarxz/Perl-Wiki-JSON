@@ -168,7 +168,7 @@ Undocumented by the moment.
 
 # DEPENDENCIES
 
-The module will pull all the dependencies it needs on install, the minimum supported Perl is v5.38.2.
+The module will pull all the dependencies it needs on install, the minimum supported Perl is v5.16.3, although latest versions are mostly tested for 5.38.2
 
 # CONFIGURATION AND ENVIRONMENT
 
