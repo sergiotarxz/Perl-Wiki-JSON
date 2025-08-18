@@ -40,11 +40,23 @@ sub _search_interrupt {
     return $i;
 }
 
+sub _insert_into_output {
+    die 'Wrong number of arguments' if scalar @_ != 3;
+    my ($self, $output, $buffer) = @_;
+    if ($buffer =~ /^$/) {
+        $buffer = '';
+        return ($buffer);
+    }
+    push @$output, $buffer;
+    $buffer = '';
+    return ($buffer);
+}
+
 sub _break_lines_template {
     my ( $self, $output, $buffer, $current_char, $i ) = @_;
     if ( $current_char eq "|" ) {
-        push @$output, $buffer;
-        return ( 1, '', $i );
+        ($buffer) = $self->_insert_into_output($output, $buffer);
+        return ( 1, $buffer, $i );
     }
     return ( 0, $buffer, $i );
 }
@@ -65,8 +77,8 @@ sub _break_lines {
 sub _break_lines_on_newline {
     my ( $self, $output, $buffer, $current_char, $i ) = @_;
     if ( $current_char eq "\n" ) {
-        push @$output, $buffer;
-        return ( 1, '', $i );
+        ($buffer) = $self->_insert_into_output($output, $buffer);
+        return ( 1, $buffer, $i );
     }
     return ( 0, $buffer, $i );
 }
@@ -78,8 +90,7 @@ sub _if_interrupted {
             $options );
     }
     if ( !$options->{is_nowiki} ) {
-        push @$output, $buffer;
-        $buffer = '';
+        ($buffer) = $self->_insert_into_output($output, $buffer);
     }
     return ($buffer);
 }
@@ -327,7 +338,7 @@ sub _parse_in_array {
                     $buffer );
                 next;
             }
-            push @$output, $buffer;
+            ($buffer) = $self->_insert_into_output($output, $buffer);
         }
         $buffer = '';
     }
@@ -470,10 +481,7 @@ sub _save_before_new_element {
         $self->current_list_output($output);
         $options->{element_found} = 1;
     }
-    if ( length $buffer ) {
-        push @$output, $buffer;
-        $buffer = '';
-    }
+    ($buffer) = $self->_insert_into_output($output, $buffer);
     return ( $output, $buffer );
 }
 
