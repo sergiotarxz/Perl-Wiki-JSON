@@ -16,7 +16,7 @@
    "prereqs" : {
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.42"
+            "Module::Build" : "0"
          }
       },
       "runtime" : {
@@ -45,7 +45,14 @@
       }
    },
    "release_status" : "stable",
-   "resources" : {},
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/sergiotarxz/Perl-Wiki-JSON/issues"
+      },
+      "repository" : {
+         "url" : "https://github.com/sergiotarxz/Perl-Wiki-JSON"
+      }
+   },
    "version" : "v0.0.22",
    "x_serialization_backend" : "JSON::PP version 4.16"
 }

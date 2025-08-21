@@ -3,6 +3,8 @@ abstract: 'Parse wiki-like articles to a data-structure transformable to JSON.'
 author:
   - 'Sergio Iglesias <contact@owlcode.tech>'
 build_requires: {}
+configure_requires:
+  Module::Build: '0'
 dynamic_config: 0
 generated_by: 'Module::Build version 0.4234, CPAN::Meta::Converter version 2.150010'
 license: gpl
@@ -13,7 +15,7 @@ name: Wiki-JSON
 provides:
   Wiki::JSON:
     file: lib/Wiki/JSON.pm
-    version: v0.0.21
+    version: v0.0.22
   Wiki::JSON::Contributing:
     file: lib/Wiki/JSON/Contributing.pm
   Wiki::JSON::Parser:
@@ -28,5 +30,5 @@ requires:
   Test::Most: '0'
   perl: v5.16.3
 resources: {}
-version: v0.0.21
+version: v0.0.22
 x_serialization_backend: 'CPAN::Meta::YAML version 0.020'
