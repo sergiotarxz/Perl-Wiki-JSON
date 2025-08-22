@@ -12,14 +12,15 @@ use Mojo::Util qw/xml_escape/;
 has _wiki_json => ( is => 'lazy' );
 
 sub pre_html_json {
-    my ( $self, $wiki_text ) = @_;
+    my ( $self, $wiki_text, $template_callback, $options) = @_;
+    $options //= {};
     my @dom;
     push @dom,
       $self->_open_html_element( 'article', 0, { class => 'wiki-article' } );
     my $json = $self->_wiki_json->parse($wiki_text);
 
     # print Data::Dumper::Dumper $json;
-    push @dom, @{ $self->_parse_output($json) };
+    push @dom, @{ $self->_parse_output($json, $template_callback, $options) };
     push @dom, $self->_close_html_element('article');
     return \@dom;
 }
@@ -93,11 +94,11 @@ sub _parse_output_try_parse_plain_text {
 }
 
 sub _parse_output_try_parse_italic {
-    if ( @_ < 6 ) {
+    if ( @_ < 7 ) {
         die 'Incorrect arguments _parse_output_try_parse_italic';
     }
     my ( $self, $dom, $element, $found_inline_element,
-        $needs_closing_parragraph, $options )
+        $needs_closing_parragraph, $template_callback, $options )
       = @_;
     my $needs_next;
     if ( $element->{type} eq 'italic' ) {
@@ -107,8 +108,8 @@ sub _parse_output_try_parse_italic {
         push @$dom, $self->_open_html_element('i');
         push @$dom,
           @{
-            $self->_parse_output( $element->{output},
-                { inside_inline_element => 1 } )
+            $self->_parse_output( $element->{output}, $template_callback,
+                { %$options, inside_inline_element => 1 } )
           };
         push @$dom, $self->_close_html_element('i');
         $needs_next = 1;
@@ -117,11 +118,11 @@ sub _parse_output_try_parse_italic {
 }
 
 sub _parse_output_try_parse_bold_and_italic {
-    if ( @_ < 6 ) {
+    if ( @_ < 7 ) {
         die 'Incorrect arguments _parse_output_try_parse_bold_and_italic';
     }
     my ( $self, $dom, $element, $found_inline_element,
-        $needs_closing_parragraph, $options )
+        $needs_closing_parragraph, $template_callback, $options )
       = @_;
     my $needs_next;
     if ( $element->{type} eq 'bold_and_italic' ) {
@@ -132,8 +133,8 @@ sub _parse_output_try_parse_bold_and_italic {
         push @$dom, $self->_open_html_element('i');
         push @$dom,
           @{
-            $self->_parse_output( $element->{output},
-                { inside_inline_element => 1 } )
+            $self->_parse_output( $element->{output}, $template_callback,
+                { %$options, inside_inline_element => 1 } )
           };
         push @$dom, $self->_close_html_element('i');
         push @$dom, $self->_close_html_element('b');
@@ -143,11 +144,11 @@ sub _parse_output_try_parse_bold_and_italic {
 }
 
 sub _parse_output_try_parse_bold {
-    if ( @_ < 6 ) {
+    if ( @_ < 7 ) {
         die 'Incorrect arguments _parse_output_try_parse_bold';
     }
     my ( $self, $dom, $element, $found_inline_element,
-        $needs_closing_parragraph, $options )
+        $needs_closing_parragraph, $template_callback, $options )
       = @_;
     my $needs_next;
     if ( $element->{type} eq 'bold' ) {
@@ -157,8 +158,8 @@ sub _parse_output_try_parse_bold {
         push @$dom, $self->_open_html_element('b');
         push @$dom,
           @{
-            $self->_parse_output( $element->{output},
-                { inside_inline_element => 1 } )
+            $self->_parse_output( $element->{output}, $template_callback,
+                { %$options, inside_inline_element => 1 } )
           };
         push @$dom, $self->_close_html_element('b');
         $needs_next = 1;
@@ -192,11 +193,61 @@ sub _parse_output_try_parse_link {
     return ( $needs_next, $needs_closing_parragraph, $found_inline_element );
 }
 
+sub _parse_output_try_parse_template {
+    my ($self, $dom, $element, $needs_closing_parragraph, $found_inline_element, $template_callbacks, $options) = @_;
+    my $needs_next;
+    if ($element->{type} eq 'template') {
+        my $template = $element;
+        my $is_inline = $template_callbacks->{is_inline}->($template);
+        if ($options->{inside_inline_element} && !$is_inline) {
+            warn 'No-inline (block) template found inside inline element';
+        }
+        if ($is_inline) {
+            $found_inline_element = 1;
+            ($needs_closing_parragraph) =
+            $self->_open_parragraph( $dom, $needs_closing_parragraph, $options );
+        } else {
+            ($needs_closing_parragraph) =
+            $self->_close_parragraph( $dom, $needs_closing_parragraph,
+            $options );
+        }
+        my $parse_sub = sub {
+            my ($wiki_text, $options) = @_;
+            return $self->pre_html_json($wiki_text, $template_callbacks, $options);
+        };
+        my $open_html_element_sub = sub  {
+            my ($tag, $self_closing, $attrs) =@_;
+            if (!defined $tag) {
+                die 'Tag is not optional';
+            }
+            $self_closing //= 0;
+            $attrs //= {};
+            return $self->_open_html_element($tag, $self_closing, $attrs);
+        };
+        my $close_html_element_sub = sub {
+            my ($tag) = @_;
+            if (!defined $tag) {
+                die 'Tag is not optional';
+            }
+            return $self->_close_html_element($tag);
+        };
+        my $new_elements = $template_callbacks->{generate_elements}->($element, $options, $parse_sub, $open_html_element_sub, $close_html_element_sub);
+        if (defined $new_elements) {{ 
+            if ('ARRAY' ne ref $new_elements) {
+                warn 'Return from generate_elements is not an ArrayRef, user error';
+                next;
+            }
+            push @$dom, @$new_elements;
+        }}
+    }
+    return ($needs_next, $needs_closing_parragraph, $found_inline_element);
+}
+
 sub _parse_output_try_parse_unordered_list {
-    if ( @_ < 5 ) {
+    if ( @_ < 6 ) {
         die 'Incorrect number of parameters';
     }
-    my ( $self, $dom, $element, $needs_closing_parragraph, $options ) = @_;
+    my ( $self, $dom, $element, $needs_closing_parragraph, $template_callback, $options ) = @_;
     my $needs_next;
     if ( $element->{type} eq 'unordered_list' ) {
         if ( $options->{inside_inline_element} ) {
@@ -211,7 +262,7 @@ sub _parse_output_try_parse_unordered_list {
             push @$dom, $self->_open_html_element('li');
             push @$dom,
               @{
-                $self->_parse_output( $element->{output},
+                $self->_parse_output( $element->{output}, $template_callback,
                     { %$options, is_list_element => 1 } )
               };
             push @$dom, $self->_close_html_element('li');
@@ -223,10 +274,10 @@ sub _parse_output_try_parse_unordered_list {
 }
 
 sub _parse_output_try_parse_hx {
-    if ( @_ < 5 ) {
+    if ( @_ < 6 ) {
         die 'Incorrect arguments to _parse_output_try_parse_hx';
     }
-    my ( $self, $dom, $element, $needs_closing_parragraph, $options ) = @_;
+    my ( $self, $dom, $element, $needs_closing_parragraph, $template_callback, $options ) = @_;
     my $needs_next;
     if ( $element->{type} eq 'hx' ) {
         if ( $options->{inside_inline_element} ) {
@@ -240,7 +291,7 @@ sub _parse_output_try_parse_hx {
         push @$dom, $self->_open_html_element( xml_escape "h$hx_level" );
         push @$dom,
           @{
-            $self->_parse_output( $element->{output},
+            $self->_parse_output( $element->{output}, $template_callback,
                 { %$options, inside_inline_element => 1 } )
           };
         push @$dom, $self->_close_html_element( xml_escape "h$hx_level" );
@@ -250,10 +301,10 @@ sub _parse_output_try_parse_hx {
 }
 
 sub _parse_output {
-    if ( @_ < 2 ) {
+    if ( @_ < 3 ) {
         die '_parse_output needs at least $self and $output';
     }
-    my ( $self, $output, $options ) = @_;
+    my ( $self, $output, $template_callback, $options ) = @_;
     $options //= {};
     my @dom;
     my $needs_closing_parragraph = 0;
@@ -272,29 +323,31 @@ sub _parse_output {
 
             ( $needs_next, $needs_closing_parragraph, $found_inline_element ) =
               $self->_parse_output_try_parse_bold( \@dom, $element,
-                $found_inline_element, $needs_closing_parragraph, $options );
+                $found_inline_element, $needs_closing_parragraph, $template_callback, $options );
             next if $needs_next;
             ( $needs_next, $needs_closing_parragraph, $found_inline_element ) =
               $self->_parse_output_try_parse_bold_and_italic( \@dom, $element,
-                $found_inline_element, $needs_closing_parragraph, $options );
+                $found_inline_element, $needs_closing_parragraph, $template_callback, $options );
             next if $needs_next;
             ( $needs_next, $needs_closing_parragraph, $found_inline_element ) =
               $self->_parse_output_try_parse_italic( \@dom, $element,
-                $found_inline_element, $needs_closing_parragraph, $options );
+                $found_inline_element, $needs_closing_parragraph, $template_callback, $options );
             next if $needs_next;
             ( $needs_next, $needs_closing_parragraph ) =
               $self->_parse_output_try_parse_hx( \@dom, $element,
-                $needs_closing_parragraph, $options );
+                $needs_closing_parragraph, $template_callback, $options );
             next if $needs_next;
 
             ( $needs_next, $needs_closing_parragraph ) =
               $self->_parse_output_try_parse_unordered_list( \@dom, $element,
-                $needs_closing_parragraph, $options );
+                $needs_closing_parragraph, $template_callback, $options );
             next if $needs_next;
             ( $needs_next, $needs_closing_parragraph, $found_inline_element ) =
               $self->_parse_output_try_parse_link( \@dom, $element,
                 $needs_closing_parragraph, $found_inline_element, $options );
             next if $needs_next;
+            ( $needs_next, $needs_closing_parragraph, $found_inline_element) =
+                $self->_parse_output_try_parse_template( \@dom, $element, $needs_closing_parragraph, $found_inline_element, $template_callback, $options);
 
         }
         $first                       = 0;

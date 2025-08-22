@@ -26,8 +26,11 @@ sub parse {
 }
 
 sub pre_html {
-    my ($self, $wiki_text) = @_;
-    return Wiki::JSON::HTML->new->pre_html_json($wiki_text);
+    my ($self, $wiki_text, $template_callbacks) = @_;
+    $template_callbacks //= {};
+    $template_callbacks->{is_inline} //= sub { return 1; };
+    $template_callbacks->{generate_elements} //= sub {};
+    return Wiki::JSON::HTML->new->pre_html_json($wiki_text, $template_callbacks);
 }
 1;
 
