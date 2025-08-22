@@ -60,6 +60,12 @@ moment.
 
 Parses the wiki format into a serializable to JSON or YAML Perl data structure.
 
+## pre\_html
+
+    my $structure = $wiki_parser->pre_html($wiki_string);
+
+Retrieves an ArrayRef containing just HashRefs without nesting describing how HTML tags should be open and closed for a wiki text.
+
 # RETURN FROM METHODS
 
 ## parse

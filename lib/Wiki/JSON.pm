@@ -9,6 +9,7 @@ use Moo;
 use Data::Dumper;
 use Const::Fast;
 use Wiki::JSON::Parser;
+use Wiki::JSON::HTML;
 
 our $VERSION = "0.0.23";
 
@@ -22,6 +23,11 @@ const my $LIST_ELEMENT_DELIMITER                                => "\n* ";
 sub parse {
     my ( $self, $wiki_text ) = @_;
     return Wiki::JSON::Parser->new->parse($wiki_text);
+}
+
+sub pre_html {
+    my ($self, $wiki_text) = @_;
+    return Wiki::JSON::HTML->new->pre_html_json($wiki_text);
 }
 1;
 
@@ -88,6 +94,12 @@ moment.
     my $structure = $wiki_parser->parse($wiki_string);
 
 Parses the wiki format into a serializable to JSON or YAML Perl data structure.
+
+=head2 pre_html
+
+    my $structure = $wiki_parser->pre_html($wiki_string);
+
+Retrieves an ArrayRef containing just HashRefs without nesting describing how HTML tags should be open and closed for a wiki text.
 
 =head1 RETURN FROM METHODS
 
