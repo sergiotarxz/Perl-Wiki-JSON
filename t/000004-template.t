@@ -24,6 +24,88 @@ sub stub_generate {
 
 }
 {
+    my $text = 'hola
+hola {{stub}} hola
+hola';
+    my $parsed_html = Wiki::JSON->new->pre_html(
+        $text,
+        {
+            is_inline => sub {
+                return 0;
+            },
+            generate_elements => sub {
+                return stub_generate(@_);
+            }
+        }
+    );
+
+#    print STDERR Data::Dumper::Dumper $parsed_html;
+    is_deeply $parsed_html,
+      [
+        Wiki::JSON::HTML->_open_html_element(
+            'article', 0, { class => 'wiki-article' }
+        ),
+        Wiki::JSON::HTML->_open_html_element('p'),
+        'hola',
+        Wiki::JSON::HTML->_close_html_element('p'),
+        Wiki::JSON::HTML->_open_html_element('p'),
+        'hola ',
+        Wiki::JSON::HTML->_close_html_element('p'),
+        Wiki::JSON::HTML->_open_html_element(
+            'span', 0, { style => 'color: red;' }
+        ),
+        Wiki::JSON::HTML->_close_html_element('span'),
+        Wiki::JSON::HTML->_open_html_element('p'),
+        'hola',
+        Wiki::JSON::HTML->_close_html_element('p'),
+        Wiki::JSON::HTML->_open_html_element('p'),
+        'hola',
+        Wiki::JSON::HTML->_close_html_element('p'),
+        Wiki::JSON::HTML->_close_html_element( 'article', ),
+      ],
+      'Simple template works html™';
+}
+{
+    my $text = 'hola
+hola {{stub}} hola
+hola';
+    my $parsed_html = Wiki::JSON->new->pre_html(
+        $text,
+        {
+            is_inline => sub {
+                return 1;
+            },
+            generate_elements => sub {
+                return stub_generate(@_);
+            }
+        }
+    );
+
+#    print STDERR Data::Dumper::Dumper $parsed_html;
+    is_deeply $parsed_html,
+      [
+        Wiki::JSON::HTML->_open_html_element(
+            'article', 0, { class => 'wiki-article' }
+        ),
+        Wiki::JSON::HTML->_open_html_element('p'),
+        'hola',
+        Wiki::JSON::HTML->_close_html_element('p'),
+        Wiki::JSON::HTML->_open_html_element('p'),
+        'hola ',
+        Wiki::JSON::HTML->_open_html_element(
+            'span', 0, { style => 'color: red;' }
+        ),
+        Wiki::JSON::HTML->_close_html_element('span'),
+        'hola',
+        Wiki::JSON::HTML->_close_html_element('p'),
+        Wiki::JSON::HTML->_open_html_element('p'),
+        'hola',
+        Wiki::JSON::HTML->_close_html_element('p'),
+        Wiki::JSON::HTML->_close_html_element( 'article', ),
+      ],
+      'Simple template works html™';
+}
+{
     my $text   = '{{stub}}';
     my $parsed = Wiki::JSON->new->parse($text);
 
