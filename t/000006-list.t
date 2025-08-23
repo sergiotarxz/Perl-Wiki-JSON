@@ -94,6 +94,7 @@ end of list/
 * hola<br>hola
 * hey '''bold'''''italic''[[hola]]
 * adios
+* ''hola''
 end of list '''/
     );
 
@@ -124,6 +125,11 @@ end of list '''/
         Wiki::JSON::HTML->_close_html_element('li'),
         Wiki::JSON::HTML->_open_html_element('li'),
         'adios',
+        Wiki::JSON::HTML->_close_html_element('li'),
+        Wiki::JSON::HTML->_open_html_element('li'),
+        Wiki::JSON::HTML->_open_html_element('i'),
+        'hola',
+        Wiki::JSON::HTML->_close_html_element('i'),
         Wiki::JSON::HTML->_close_html_element('li'),
 
         Wiki::JSON::HTML->_close_html_element('ul'),

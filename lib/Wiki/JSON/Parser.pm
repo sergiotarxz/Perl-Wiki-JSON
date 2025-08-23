@@ -135,21 +135,18 @@ sub _insert_new_list_element_after_asterisk {
     my $searched    = $LIST_ELEMENT_DELIMITER;
     my $size_search = length $searched;
     if ( length $buffer ) {
-        if ( $options->{'br_found'} || $options->{element_found} ) {
-            ($buffer) =
-              $self->_insert_list_appending_if_possible( $output, $buffer,
-                $options );
-            $options->{element_found} = 0;
-        }
-        else {
-            ($buffer) =
-              $self->_insert_list_element_never_appending( $output, $buffer, );
-        }
+        ($buffer) =
+          $self->_insert_list_appending_if_possible( $output, $buffer,
+            $options );
+        $options->{element_found} = 0;
     }
     delete $options->{br_found};
     delete $options->{element_found};
     $buffer = '';
     $i += $size_search;
+    push @$output, { type => 'list_element', output => [] };
+    $self->current_list_output( $output->[-1]{output} );
+    $buffer = '';
     return ( $i, $buffer, );
 }
 
@@ -437,6 +434,7 @@ sub _try_parse_unordered_list {
         },
         $options,
     );
+    @{$element->{output}} = grep { @{$_->{output}} } @{$element->{output}};
     push @$output, $element;
     return ( 1, $i, $buffer, $options );
 }
@@ -466,7 +464,7 @@ sub _try_discard_interrupt_list {
 
 sub _save_before_new_element {
     my ( $self, $output, $buffer, $options ) = @_;
-    if ( $options->{is_unordered_list} && (length $buffer || $options->{element_found})) {
+    if ( $options->{is_unordered_list} ) {
         if (length $buffer || !@$output ) {
             push @$output, { type => 'list_element', output => [] };
         }
