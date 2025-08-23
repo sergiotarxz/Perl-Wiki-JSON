@@ -1,3 +1,7 @@
+0.0.25 Sat Aug 23 19:12:25 2025 +0200
+    - Improving the parser of images fixing bugs related to captions
+    - Parsing images to html supported.
+
 0.0.24 Sat Aug 23 09:48:32 2025 +0200
     - pre_html preliminar support (Do not use yet, not enough tested)
     - Fixing templates errors and inconsistencies
