@@ -205,7 +205,7 @@ end of list '''/
             ],
         },
       ],
-      'Parsing embedded elements works fine';
+      'Parsing embedded elements works fine with the embedded element being in the last list element';
 }
 {
     my $parsed = Wiki::JSON->new->parse(
@@ -243,7 +243,7 @@ end of list '''/
             ],
         },
       ],
-      'Parsing embedded elements works fine';
+      'Parsing embedded elements works fine with the embedded element being in the middle';
 }
 {
     my $parsed = Wiki::JSON->new->parse(
@@ -281,6 +281,6 @@ end of list '''/
             ],
         },
       ],
-      'Parsing embedded elements works fine';
+      'Parsing embedded elements with br works fine';
 }
 done_testing();
