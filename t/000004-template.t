@@ -56,14 +56,14 @@ hola';
         ),
         Wiki::JSON::HTML->_close_html_element('span'),
         Wiki::JSON::HTML->_open_html_element('p'),
-        'hola',
+        ' hola',
         Wiki::JSON::HTML->_close_html_element('p'),
         Wiki::JSON::HTML->_open_html_element('p'),
         'hola',
         Wiki::JSON::HTML->_close_html_element('p'),
         Wiki::JSON::HTML->_close_html_element( 'article', ),
       ],
-      'Simple template works html™';
+      'Template works in block';
 }
 {
     my $text = 'hola
@@ -81,7 +81,7 @@ hola';
         }
     );
 
-#    print STDERR Data::Dumper::Dumper $parsed_html;
+#    print STDERR Data::Dumper::Dumper @$parsed_html;
     is_deeply $parsed_html,
       [
         Wiki::JSON::HTML->_open_html_element(
@@ -96,14 +96,14 @@ hola';
             'span', 0, { style => 'color: red;' }
         ),
         Wiki::JSON::HTML->_close_html_element('span'),
-        'hola',
+        ' hola',
         Wiki::JSON::HTML->_close_html_element('p'),
         Wiki::JSON::HTML->_open_html_element('p'),
         'hola',
         Wiki::JSON::HTML->_close_html_element('p'),
         Wiki::JSON::HTML->_close_html_element( 'article', ),
       ],
-      'Simple template works html™';
+      'Inline template generates html ok';
 }
 {
     my $text   = '{{stub}}';

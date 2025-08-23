@@ -63,10 +63,6 @@ sub _break_lines_template {
 
 sub _break_lines {
     my ( $self, $output, $buffer, $i, $current_char, $options ) = @_;
-    if ( $options->{is_template} ) {
-        return $self->_break_lines_template( $output, $buffer, $current_char,
-            $i );
-    }
     if ( $options->{is_unordered_list} ) {
         return ( 0, $buffer, $i );
     }
@@ -1122,7 +1118,7 @@ sub _try_parse_template {
             template_name => $1,
             output        => [],
           };
-        return ( 1, $i + $size_search + 2, $buffer );
+        return ( 1, $i + $size_search + 1, $buffer );
     }
     my ( $got_template_name, $template_name ) =
       $self->_try_parse_template_get_template_name( $wiki_text, $i,
