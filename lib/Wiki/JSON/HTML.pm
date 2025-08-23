@@ -1,12 +1,11 @@
 package Wiki::JSON::HTML;
 
-use v5.38.2;
+use v5.16.3;
 
 use strict;
 use warnings;
 
 use Moo;
-use Mojo::DOM;
 use Mojo::Util qw/xml_escape/;
 
 has _wiki_json => ( is => 'lazy' );

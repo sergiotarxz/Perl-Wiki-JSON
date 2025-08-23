@@ -4,13 +4,15 @@ error() {
     exit 1;
 }
 
-perl Build.PL
 echo 'Installing deps current perl';
-perlbrew exec ./Build installdeps || error
+perl Build.PL || error
+./Build installdeps || error
 echo 'Installing deps minimum perl';
+perlbrew exec --with perl-5.16.3 perl Build.PL || error
+echo ./Build installdeps || error
 perlbrew exec --with perl-5.16.3 ./Build installdeps || error
 echo "Testing current perl";
-perlbrew exec prove || error
+prove || error
 echo "Testing 5.16.3";
 perlbrew exec --with perl-5.16.3 prove || error
 perl -e '
