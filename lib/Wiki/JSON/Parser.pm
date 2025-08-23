@@ -136,7 +136,6 @@ sub _insert_new_list_element_after_asterisk {
     my $size_search = length $searched;
     if ( length $buffer ) {
         if ( $options->{'br_found'} || $options->{element_found} ) {
-            say 'happened';
             ($buffer) =
               $self->_insert_list_appending_if_possible( $output, $buffer,
                 $options );
@@ -467,15 +466,16 @@ sub _try_discard_interrupt_list {
 
 sub _save_before_new_element {
     my ( $self, $output, $buffer, $options ) = @_;
-    if ( !length $buffer ) {
-        return ( $output, $buffer );
-    }
-    if ( $options->{is_unordered_list} ) {
-
-        push @$output, { type => 'list_element', output => [] };
+    if ( $options->{is_unordered_list} && (length $buffer || $options->{element_found})) {
+        if (length $buffer || !@$output ) {
+            push @$output, { type => 'list_element', output => [] };
+        }
         $output = $output->[-1]{output};
         $self->current_list_output($output);
         $options->{element_found} = 1;
+    }
+    if ( !length $buffer ) {
+        return ( $output, $buffer );
     }
     ($buffer) = $self->_insert_into_output( $output, $buffer );
     return ( $output, $buffer );

@@ -19,7 +19,6 @@ sub pre_html_json {
       $self->_open_html_element( 'article', 0, { class => 'wiki-article' } );
     my $json = $self->_wiki_json->parse($wiki_text);
 
-    # print Data::Dumper::Dumper $json;
     push @dom, @{ $self->_parse_output($json, $template_callback, $options) };
     push @dom, $self->_close_html_element('article');
     return \@dom;
@@ -76,7 +75,9 @@ sub _parse_output_try_parse_plain_text {
         $needs_closing_parragraph, $options )
       = @_;
     my $needs_next = 0;
+    my $found_text;
     if ( 'HASH' ne ref $element ) {
+        $found_text = 1;
         if ( !$last_element_inline_element ) {
             ($needs_closing_parragraph) =
               $self->_close_parragraph( $dom, $needs_closing_parragraph,
@@ -84,13 +85,13 @@ sub _parse_output_try_parse_plain_text {
         }
         if ($element) {
             ($needs_closing_parragraph) =
-              $self->_open_parragraph( $dom, $needs_closing_parragraph,
+              $self->_open_parragraph( $dom, $needs_closing_parragraph, 0,
                 $options );
             push @$dom, $self->_html_string_content_to_pushable($element);
         }
         $needs_next = 1;
     }
-    return ( $needs_next, $needs_closing_parragraph );
+    return ( $needs_next, $needs_closing_parragraph, $found_text );
 }
 
 sub _parse_output_try_parse_italic {
@@ -102,9 +103,9 @@ sub _parse_output_try_parse_italic {
       = @_;
     my $needs_next;
     if ( $element->{type} eq 'italic' ) {
-        ($needs_closing_parragraph) =
-          $self->_open_parragraph( $dom, $needs_closing_parragraph, $options );
         $found_inline_element = 1;
+        ($needs_closing_parragraph) =
+          $self->_open_parragraph( $dom, $needs_closing_parragraph, $found_inline_element, $options );
         push @$dom, $self->_open_html_element('i');
         push @$dom,
           @{
@@ -126,9 +127,9 @@ sub _parse_output_try_parse_bold_and_italic {
       = @_;
     my $needs_next;
     if ( $element->{type} eq 'bold_and_italic' ) {
-        ($needs_closing_parragraph) =
-          $self->_open_parragraph( $dom, $needs_closing_parragraph, $options );
         $found_inline_element = 1;
+        ($needs_closing_parragraph) =
+          $self->_open_parragraph( $dom, $needs_closing_parragraph, $found_inline_element, $options );
         push @$dom, $self->_open_html_element('b');
         push @$dom, $self->_open_html_element('i');
         push @$dom,
@@ -152,9 +153,9 @@ sub _parse_output_try_parse_bold {
       = @_;
     my $needs_next;
     if ( $element->{type} eq 'bold' ) {
-        ($needs_closing_parragraph) =
-          $self->_open_parragraph( $dom, $needs_closing_parragraph, $options );
         $found_inline_element = 1;
+        ($needs_closing_parragraph) =
+          $self->_open_parragraph( $dom, $needs_closing_parragraph, $found_inline_element, $options );
         push @$dom, $self->_open_html_element('b');
         push @$dom,
           @{
@@ -175,9 +176,9 @@ sub _parse_output_try_parse_link {
     my ( $self, $dom, $element, $needs_closing_parragraph, $found_inline_element, $options ) = @_;
     my $needs_next;
     if ( $element->{type} eq 'link' ) {
-        ($needs_closing_parragraph) =
-          $self->_open_parragraph( $dom, $needs_closing_parragraph, $options );
         $found_inline_element = 1;
+        ($needs_closing_parragraph) =
+          $self->_open_parragraph( $dom, $needs_closing_parragraph, $found_inline_element, $options );
         my $real_link = $element->{link};
         if ( $real_link !~ /^\w:/ && $real_link !~ m@^(?:/|\w+\.)@ ) {
 
@@ -205,7 +206,7 @@ sub _parse_output_try_parse_template {
         if ($is_inline) {
             $found_inline_element = 1;
             ($needs_closing_parragraph) =
-            $self->_open_parragraph( $dom, $needs_closing_parragraph, $options );
+            $self->_open_parragraph( $dom, $needs_closing_parragraph, $found_inline_element, $options );
         } else {
             ($needs_closing_parragraph) =
             $self->_close_parragraph( $dom, $needs_closing_parragraph,
@@ -259,6 +260,12 @@ sub _parse_output_try_parse_unordered_list {
         my $elements = $element->{output};
         push @$dom, $self->_open_html_element('ul');
         for my $element (@$elements) {
+            if ('HASH' ne ref $element) {
+                die 'List element is text and not hash';
+            }
+            if ($element->{type} ne 'list_element') {
+                die 'List element is not a list_element';
+            }
             push @$dom, $self->_open_html_element('li');
             push @$dom,
               @{
@@ -310,12 +317,15 @@ sub _parse_output {
     my $needs_closing_parragraph = 0;
     my $first                    = 1;
     my $last_element_inline_element;
+    my $last_element_text;
     for my $element (@$output) {
         my $found_inline_element;
+        my $found_text;
         {
             my ($needs_next);
             $options->{first} = $first;
-            ( $needs_next, $needs_closing_parragraph ) =
+            $options->{last_element_text} = $last_element_text;
+            ( $needs_next, $needs_closing_parragraph, $found_text ) =
               $self->_parse_output_try_parse_plain_text( \@dom, $element,
                 $last_element_inline_element, $needs_closing_parragraph,
                 $options );
@@ -352,6 +362,7 @@ sub _parse_output {
         }
         $first                       = 0;
         $last_element_inline_element = !!$found_inline_element;
+        $last_element_text = !!$found_text;
     }
     ($needs_closing_parragraph) =
       $self->_close_parragraph( \@dom, $needs_closing_parragraph, $options );
@@ -359,9 +370,12 @@ sub _parse_output {
 }
 
 sub _open_parragraph {
-    my ( $self, $dom, $needs_closing_parragraph, $options ) = @_;
+    if (@_ < 5) {
+        die 'Incorrect arguments';
+    }
+    my ( $self, $dom, $needs_closing_parragraph, $found_inline_element, $options ) = @_;
     if ( $options->{is_list_element} || $options->{inside_inline_element} ) {
-        if ( !$options->{first} ) {
+        if ( !$options->{first} && !$found_inline_element) {
             push @$dom, $self->_open_html_element( 'br', 1 );
         }
         return ($needs_closing_parragraph);
