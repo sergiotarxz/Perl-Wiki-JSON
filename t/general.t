@@ -165,7 +165,7 @@ Let's end them '' == '''
                                                           },
                                                           'This is a link to a Image ',
                                                           {
-                                                            'caption' => 'frame',
+                                                            'caption' => 'This is a caption',
                                                             'options' => {
                                                                            'format' => {
                                                                                          'frame' => 1

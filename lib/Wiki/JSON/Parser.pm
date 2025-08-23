@@ -434,7 +434,8 @@ sub _try_parse_unordered_list {
         },
         $options,
     );
-    @{$element->{output}} = grep { @{$_->{output}} } @{$element->{output}};
+    @{ $element->{output} } =
+      grep { @{ $_->{output} } } @{ $element->{output} };
     push @$output, $element;
     return ( 1, $i, $buffer, $options );
 }
@@ -465,7 +466,7 @@ sub _try_discard_interrupt_list {
 sub _save_before_new_element {
     my ( $self, $output, $buffer, $options ) = @_;
     if ( $options->{is_unordered_list} ) {
-        if (length $buffer || !@$output ) {
+        if ( length $buffer || !@$output ) {
             push @$output, { type => 'list_element', output => [] };
         }
         $output = $output->[-1]{output};
@@ -720,37 +721,37 @@ sub _try_parse_link_component_formats {
     my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     if ( $tmp_buffer =~ /^border$/x ) {
         $element_options->{format}{border} = 1;
-        return $caption;
+        return 1;
     }
     if ( $tmp_buffer =~ /^frameless$/x ) {
-        return $caption
+        return 1
           if $self->_is_defined_image_format_exclusive($element_options);
         $element_options->{format}{frameless} = 1;
-        return $caption;
+        return 1;
     }
     if ( $tmp_buffer =~ /^frame$/x ) {
-        return $caption
+        return 1
           if $self->_is_defined_image_format_exclusive($element_options);
         $element_options->{format}{frame} = 1;
-        return $caption;
+        return 1;
     }
     if ( $tmp_buffer =~ /^framed$/x ) {
-        return $caption
+        return 1
           if $self->_is_defined_image_format_exclusive($element_options);
         $element_options->{format}{frame} = 1;
-        return $caption;
+        return 1;
     }
     if ( $tmp_buffer =~ /^thumb$/x ) {
-        return $caption
+        return 1
           if $self->_is_defined_image_format_exclusive($element_options);
         $element_options->{format}{thumb} = 1;
-        return $caption;
+        return 1;
     }
     if ( $tmp_buffer =~ /^thumbnail$/x ) {
-        return $caption
+        return 1
           if $self->_is_defined_image_format_exclusive($element_options);
         $element_options->{format}{thumb} = 1;
-        return $caption;
+        return 1;
     }
     return;
 }
@@ -904,11 +905,11 @@ sub _try_parse_link_component_extra_options {
 
 sub _try_parse_link_component {
     my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
-    my $return_caption_format =
+    my $found_something =
       $self->_try_parse_link_component_formats( $tmp_buffer, $caption,
         $element_options );
-    if ( defined $return_caption_format ) {
-        return $return_caption_format;
+    if ( defined $found_something ) {
+        return $caption;
     }
     my $return_now;
     ($return_now) =
@@ -1134,7 +1135,7 @@ sub _try_parse_template {
         output        => [],
     };
     my $current_buffer = '';
-    my $needs_arg = 0;
+    my $needs_arg      = 0;
     for ( $i += $size_search + 1 ; $i < length $wiki_text ; $i++ ) {
         my $searched    = '|';
         my $size_search = length $searched;
@@ -1142,10 +1143,10 @@ sub _try_parse_template {
         if ( $searched eq $last_word ) {
             push @{ $template->{output} }, $current_buffer;
             $current_buffer = '';
-            $needs_arg = 1;
+            $needs_arg      = 1;
             next;
         }
-        $needs_arg = 0;
+        $needs_arg   = 0;
         $searched    = '}}';
         $size_search = length $searched;
         $last_word   = substr $wiki_text, $i, $size_search;
@@ -1162,7 +1163,7 @@ sub _try_parse_template {
         next if $needs_next;
         $current_buffer .= substr $wiki_text, $i, 1;
     }
-    if (length $current_buffer || $needs_arg) {
+    if ( length $current_buffer || $needs_arg ) {
         push @{ $template->{output} }, $current_buffer;
         $current_buffer = '';
     }
