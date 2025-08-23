@@ -66,9 +66,9 @@ hola';
       'Template works in block';
 }
 {
-    my $text = 'hola
-hola {{stub}} hola
-hola';
+    my $text = q@hola
+hola '''bold''' {{stub}} hola
+hola@;
     my $parsed_html = Wiki::JSON->new->pre_html(
         $text,
         {
@@ -92,6 +92,10 @@ hola';
         Wiki::JSON::HTML->_close_html_element('p'),
         Wiki::JSON::HTML->_open_html_element('p'),
         'hola ',
+        Wiki::JSON::HTML->_open_html_element('b'),
+        'bold',
+        Wiki::JSON::HTML->_close_html_element('b'),
+        ' ',
         Wiki::JSON::HTML->_open_html_element(
             'span', 0, { style => 'color: red;' }
         ),
