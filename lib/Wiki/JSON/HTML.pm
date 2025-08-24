@@ -86,9 +86,11 @@ sub _parse_output_try_parse_plain_text {
                 $options );
         }
         if ($element) {
-            ($needs_closing_parragraph) =
-              $self->_open_parragraph( $dom, $needs_closing_parragraph, 0,
-                $options );
+            if (!$last_element_inline_element) {
+                ($needs_closing_parragraph) =
+                  $self->_open_parragraph( $dom, $needs_closing_parragraph, 0,
+                    $options );
+            }
             push @$dom, $self->_html_string_content_to_pushable($element);
         }
         $needs_next = 1;
@@ -199,7 +201,9 @@ sub _parse_output_try_parse_link {
             # TODO: Allow setting a base URL.
             $real_link = '/' . $real_link;
         }
-        push @$dom, $self->_open_html_element( 'a', 0, { href => $real_link } );
+        push @$dom,
+          $self->_open_html_element( 'a', 0,
+            { href => $real_link =~ s/ /%20/gr } );
         push @$dom,
           $self->_html_string_content_to_pushable( $element->{title} );
         push @$dom, $self->_close_html_element('a');
@@ -244,7 +248,7 @@ sub _parse_output_try_parse_image {
                     $page     = $element->{options}{page};
                     $fragment = "page=@{[0+$page]}";
                 }
-                if (defined $fragment) {
+                if ( defined $fragment ) {
                     say $fragment;
                     $link_url->fragment($fragment);
                 }
@@ -263,7 +267,7 @@ sub _parse_output_try_parse_image {
                       $self->_open_html_element(
                         'video', 1,
                         {
-                            src => $element->{link},
+                            src => "" . $link_url,
                         }
                       );
                     next;
@@ -273,7 +277,7 @@ sub _parse_output_try_parse_image {
                   $self->_open_html_element(
                     'img', 1,
                     {
-                        src => $element->{link},
+                        src => "$link_url",
                         ( ( defined $alt ) ? ( alt => $alt ) : () )
                     }
                   );
@@ -300,7 +304,7 @@ sub _parse_output_try_parse_image {
                       $self->_open_html_element(
                         'video', 1,
                         {
-                            src => $element->{link},
+                            src => $link_url . ''
                         }
                       );
                     next;
@@ -309,7 +313,7 @@ sub _parse_output_try_parse_image {
                   $self->_open_html_element(
                     'img', 1,
                     {
-                        src => $element->{link},
+                        src => $link_url . '',
                         (
                               ( defined $alt )
                             ? ( alt => $alt )

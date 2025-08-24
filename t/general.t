@@ -190,4 +190,452 @@ Let's end them '' == '''
           ' ',
      ], 'Demo wiki works';
 }
+
+{
+    my $parsed_html = Wiki::JSON->new->pre_html(q@= This is a (level 1) wiki title =
+== This is a (level 2) wiki subtitle ==
+This is a paragraph of text. This is '''bold text''', while this is ''italic 
+text''. Combine the two into '''''bold and italic text'''''.
+More text in this paragraph follows.
+
+Another paragraph here.
+<nowiki>''This is printed without expanding the special characters.</nowiki>
+You would want to do that if you happen to have Wiki controls within your
+text.
+
+* This
+* Is
+* A
+* Bullet
+* Point
+* List
+
+== Other stuff ==
+Start another paragraph. {{foo|Templates are generated|with their arguments}}
+{{stub|This is under heavy development}}
+The parser has some quirks == This will generate a title == even though it
+is in the middle of a paragraph.
+''' == '' Unterminated syntaxes will still be parsed until the end of paragraph.
+
+A paragraph with links:
+This is a link to a wiki article: [[Cool Article]].
+This is a link to a wiki article with an alias: [[Cooler Article|cooler article]].
+This is a link to a URL with an alias: [[https://example.com/cool-source.html|cool article]].
+This is a link to an Image: [[File:https:/example.com/img.png|50x50px|frame|This is a caption]].
+
+=== Level 3 subheading ===
+Let's end here.@);
+#    print Data::Dumper::Dumper $parsed_html;
+
+    is_deeply $parsed_html, [
+          {
+            'status' => 'open',
+            'tag' => 'article',
+            'attrs' => {
+                         'class' => 'wiki-article'
+                       }
+          },
+          {
+            'attrs' => {},
+            'tag' => 'h1',
+            'status' => 'open'
+          },
+          'This is a (level 1) wiki title',
+          {
+            'tag' => 'h1',
+            'status' => 'close'
+          },
+          {
+            'tag' => 'h2',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'This is a (level 2) wiki subtitle',
+          {
+            'tag' => 'h2',
+            'status' => 'close'
+          },
+          {
+            'attrs' => {},
+            'tag' => 'p',
+            'status' => 'open'
+          },
+          'This is a paragraph of text. This is ',
+          {
+            'attrs' => {},
+            'status' => 'open',
+            'tag' => 'b'
+          },
+          'bold text',
+          {
+            'tag' => 'b',
+            'status' => 'close'
+          },
+          ', while this is ',
+          {
+            'tag' => 'i',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'italic ',
+          {
+            'attrs' => {},
+            'tag' => 'br',
+            'status' => 'self-close'
+          },
+          'text',
+          {
+            'tag' => 'i',
+            'status' => 'close'
+          },
+          '. Combine the two into ',
+          {
+            'attrs' => {},
+            'status' => 'open',
+            'tag' => 'b'
+          },
+          {
+            'tag' => 'i',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'bold and italic text',
+          {
+            'status' => 'close',
+            'tag' => 'i'
+          },
+          {
+            'status' => 'close',
+            'tag' => 'b'
+          },
+          '.',
+          {
+            'status' => 'close',
+            'tag' => 'p'
+          },
+          {
+            'attrs' => {},
+            'status' => 'open',
+            'tag' => 'p'
+          },
+          'More text in this paragraph follows.',
+          {
+            'status' => 'close',
+            'tag' => 'p'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'p',
+            'attrs' => {}
+          },
+          'Another paragraph here.',
+          {
+            'status' => 'close',
+            'tag' => 'p'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'p',
+            'attrs' => {}
+          },
+          '\'\'This is printed without expanding the special characters.',
+          {
+            'status' => 'close',
+            'tag' => 'p'
+          },
+          {
+            'tag' => 'p',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'You would want to do that if you happen to have Wiki controls within your',
+          {
+            'tag' => 'p',
+            'status' => 'close'
+          },
+          {
+            'attrs' => {},
+            'tag' => 'p',
+            'status' => 'open'
+          },
+          'text.',
+          {
+            'status' => 'close',
+            'tag' => 'p'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'ul',
+            'attrs' => {}
+          },
+          {
+            'tag' => 'li',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'This',
+          {
+            'status' => 'close',
+            'tag' => 'li'
+          },
+          {
+            'tag' => 'li',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'Is',
+          {
+            'status' => 'close',
+            'tag' => 'li'
+          },
+          {
+            'attrs' => {},
+            'status' => 'open',
+            'tag' => 'li'
+          },
+          'A',
+          {
+            'tag' => 'li',
+            'status' => 'close'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'li',
+            'attrs' => {}
+          },
+          'Bullet',
+          {
+            'tag' => 'li',
+            'status' => 'close'
+          },
+          {
+            'tag' => 'li',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'Point',
+          {
+            'status' => 'close',
+            'tag' => 'li'
+          },
+          {
+            'tag' => 'li',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'List',
+          {
+            'status' => 'close',
+            'tag' => 'li'
+          },
+          {
+            'status' => 'close',
+            'tag' => 'ul'
+          },
+          {
+            'tag' => 'h2',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          'Other stuff',
+          {
+            'status' => 'close',
+            'tag' => 'h2'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'p',
+            'attrs' => {}
+          },
+          'Start another paragraph. ',
+          'The parser has some quirks ',
+          {
+            'tag' => 'p',
+            'status' => 'close'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'h2',
+            'attrs' => {}
+          },
+          'This will generate a title',
+          {
+            'status' => 'close',
+            'tag' => 'h2'
+          },
+          {
+            'tag' => 'p',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          ' even though it',
+          {
+            'tag' => 'p',
+            'status' => 'close'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'p',
+            'attrs' => {}
+          },
+          'is in the middle of a paragraph.',
+          {
+            'tag' => 'b',
+            'status' => 'open',
+            'attrs' => {}
+          },
+          ' ',
+          {
+            'status' => 'open',
+            'tag' => 'h2',
+            'attrs' => {}
+          },
+          {
+            'attrs' => {},
+            'status' => 'open',
+            'tag' => 'i'
+          },
+          ' Unterminated syntaxes will still be parsed until the end of paragraph.',
+          {
+            'attrs' => {},
+            'tag' => 'br',
+            'status' => 'self-close'
+          },
+          'A paragraph with links:',
+          {
+            'status' => 'self-close',
+            'tag' => 'br',
+            'attrs' => {}
+          },
+          'This is a link to a wiki article: ',
+          {
+            'attrs' => {
+                         'href' => '/Cool%20Article'
+                       },
+            'tag' => 'a',
+            'status' => 'open'
+          },
+          'Cool Article',
+          {
+            'status' => 'close',
+            'tag' => 'a'
+          },
+          '.',
+          {
+            'attrs' => {},
+            'status' => 'self-close',
+            'tag' => 'br'
+          },
+          'This is a link to a wiki article with an alias: ',
+          {
+            'attrs' => {
+                         'href' => '/Cooler%20Article'
+                       },
+            'tag' => 'a',
+            'status' => 'open'
+          },
+          'cooler article',
+          {
+            'status' => 'close',
+            'tag' => 'a'
+          },
+          '.',
+          {
+            'tag' => 'br',
+            'status' => 'self-close',
+            'attrs' => {}
+          },
+          'This is a link to a URL with an alias: ',
+          {
+            'attrs' => {
+                         'href' => '/https://example.com/cool-source.html'
+                       },
+            'tag' => 'a',
+            'status' => 'open'
+          },
+          'cool article',
+          {
+            'status' => 'close',
+            'tag' => 'a'
+          },
+          '.',
+          {
+            'status' => 'self-close',
+            'tag' => 'br',
+            'attrs' => {}
+          },
+          'This is a link to an Image: ',
+          {
+            'attrs' => {
+                         'typeof' => 'mw:File/Frame'
+                       },
+            'tag' => 'figure',
+            'status' => 'open'
+          },
+          {
+            'attrs' => {
+                         'src' => 'https:/example.com/img.png'
+                       },
+            'status' => 'self-close',
+            'tag' => 'img'
+          },
+          {
+            'status' => 'open',
+            'tag' => 'figcaption',
+            'attrs' => {}
+          },
+          'This is a caption',
+          {
+            'tag' => 'figcaption',
+            'status' => 'close'
+          },
+          {
+            'status' => 'close',
+            'tag' => 'figure'
+          },
+          {
+            'attrs' => {},
+            'tag' => 'br',
+            'status' => 'self-close'
+          },
+          '.',
+          {
+            'attrs' => {},
+            'status' => 'open',
+            'tag' => 'h3'
+          },
+          'Level 3 subheading',
+          {
+            'tag' => 'h3',
+            'status' => 'close'
+          },
+          {
+            'status' => 'self-close',
+            'tag' => 'br',
+            'attrs' => {}
+          },
+          'Let\'s end here.',
+          {
+            'tag' => 'i',
+            'status' => 'close'
+          },
+          {
+            'tag' => 'h2',
+            'status' => 'close'
+          },
+          {
+            'status' => 'close',
+            'tag' => 'b'
+          },
+          {
+            'tag' => 'p',
+            'status' => 'close'
+          },
+          {
+            'status' => 'close',
+            'tag' => 'article'
+          }
+        ];
+
+}
 done_testing();
