@@ -1,3 +1,6 @@
+0.0.26 Sun Aug 24 06:46:03 2025 +0200
+    - Adding video support
+
 0.0.25 Sat Aug 23 19:12:25 2025 +0200
     - Improving the parser of images fixing bugs related to captions
     - Parsing images to html supported.
