@@ -1,3 +1,8 @@
+0.0.29 Sun Aug 24 08:37:01 2025 +0200
+    - Improving warning inside inline
+    - Warning on unterminated bold or italic
+    - Tests for new and old warnings
+
 0.0.28 Sun Aug 24 08:05:08 2025 +0200
     - Fixing href can contain spaces not escaped
     - Fixing <br> after anchor when text goes after anchor in inline context.
