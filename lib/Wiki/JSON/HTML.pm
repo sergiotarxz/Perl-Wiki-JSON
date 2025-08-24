@@ -232,8 +232,19 @@ sub _parse_output_try_parse_image {
                   $self->_close_parragraph( $dom, $needs_closing_parragraph,
                     $options );
             }
+            my $is_video = $element->{link} =~ /\.(?:mp4|webm|ogg|3gp|mpeg)/;
 
             if ($is_inline) {
+                if ($is_video) {
+                    push @$dom,
+                      $self->_open_html_element(
+                        'video', 1,
+                        {
+                            src => $element->{link},
+                        }
+                      );
+                    next;
+                }
                 my $alt = $element->{options}{alt} // $element->{caption};
                 push @$dom,
                   $self->_open_html_element(
@@ -251,19 +262,32 @@ sub _parse_output_try_parse_image {
             }
             push @$dom,
               $self->_open_html_element( 'figure', 0, { typeof => $typeof } );
+
             my $alt = $element->{options}{alt};
-            push @$dom,
-              $self->_open_html_element(
-                'img', 1,
-                {
-                    src => $element->{link},
-                    (
-                          ( defined $alt )
-                        ? ( alt => $alt )
-                        : ()
-                    )
+            {
+                if ($is_video) {
+                    push @$dom,
+                      $self->_open_html_element(
+                        'video', 1,
+                        {
+                            src => $element->{link},
+                        }
+                      );
+                    next;
                 }
-              );
+                push @$dom,
+                  $self->_open_html_element(
+                    'img', 1,
+                    {
+                        src => $element->{link},
+                        (
+                              ( defined $alt )
+                            ? ( alt => $alt )
+                            : ()
+                        )
+                    }
+                  );
+            }
             if ( defined $element->{caption} ) {
                 push @$dom, $self->_open_html_element('figcaption');
                 push @$dom, $element->{caption};
