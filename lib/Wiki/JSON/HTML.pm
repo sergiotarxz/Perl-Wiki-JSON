@@ -7,6 +7,7 @@ use warnings;
 
 use Moo;
 use Mojo::Util qw/xml_escape/;
+use Mojo::URL;
 
 has _wiki_json => ( is => 'lazy' );
 
@@ -232,9 +233,31 @@ sub _parse_output_try_parse_image {
                   $self->_close_parragraph( $dom, $needs_closing_parragraph,
                     $options );
             }
-            my $is_video = $element->{link} =~ /\.(?:mp4|webm|ogg|3gp|mpeg)/;
+            my $link_url = Mojo::URL->new( $element->{link} );
+            my $is_video = $link_url->path =~ /\.(?:mp4|webm|ogg|3gp|mpeg)/;
+            my $is_pdf   = $link_url->path =~ /\.(?:pdf)/;
 
+            my $pdf_element_attrs = sub {
+                my $page;
+                my $fragment;
+                if ( defined $element->{options}{page} ) {
+                    $page     = $element->{options}{page};
+                    $fragment = "page=@{[0+$page]}";
+                }
+                if (defined $fragment) {
+                    say $fragment;
+                    $link_url->fragment($fragment);
+                }
+                return { src => "$link_url", };
+            };
             if ($is_inline) {
+                if ($is_pdf) {
+                    push @$dom,
+                      $self->_open_html_element( 'iframe', 0,
+                        $pdf_element_attrs->(), );
+                    push @$dom, $self->_close_html_element('iframe');
+                    next;
+                }
                 if ($is_video) {
                     push @$dom,
                       $self->_open_html_element(
@@ -265,6 +288,13 @@ sub _parse_output_try_parse_image {
 
             my $alt = $element->{options}{alt};
             {
+                if ($is_pdf) {
+                    push @$dom,
+                      $self->_open_html_element( 'iframe', 0,
+                        $pdf_element_attrs->(), );
+                    push @$dom, $self->_close_html_element('iframe');
+                    next;
+                }
                 if ($is_video) {
                     push @$dom,
                       $self->_open_html_element(

@@ -843,24 +843,24 @@ sub _try_parse_link_component_extra_options_video_controls {
     if ( my ($thumbtime) =
         $tmp_buffer =~ /^thumbtime=((?:\d+:)?(?:\d+:)\d+)$/x )
     {
-        return $caption if defined $element_options->{thumbtime};
+        return 1 if defined $element_options->{thumbtime};
         $element_options->{thumbtime} = $thumbtime;
-        return $caption;
+        return 1;
     }
     if ( my ($start) = $tmp_buffer =~ /^start=((?:\d+:)?(?:\d+:)\d+)$/x ) {
-        return $caption if defined $element_options->{start};
+        return 1 if defined $element_options->{start};
         $element_options->{start} = $start;
-        return $caption;
+        return 1;
     }
     if ( $tmp_buffer =~ /^muted$/x ) {
-        return $caption if defined $element_options->{muted};
+        return 1 if defined $element_options->{muted};
         $element_options->{muted} = 1;
-        return $caption;
+        return 1;
     }
     if ( $tmp_buffer =~ /^loop$/x ) {
-        return $caption if defined $element_options->{loop};
+        return 1 if defined $element_options->{loop};
         $element_options->{loop} = 1;
-        return $caption;
+        return 1;
     }
     return;
 }
@@ -868,38 +868,38 @@ sub _try_parse_link_component_extra_options_video_controls {
 sub _try_parse_link_component_extra_options {
     my ( $self, $tmp_buffer, $caption, $element_options ) = @_;
     if ( my ($link) = $tmp_buffer =~ /^link=(.*)$/x ) {
-        return $caption if defined $element_options->{link};
+        return 1 if defined $element_options->{link};
         $element_options->{link} = $link;
-        return $caption;
+        return 1;
     }
     if ( my ($alt) = $tmp_buffer =~ /^alt=(.*)$/x ) {
-        return $caption if defined $element_options->{alt};
+        return 1 if defined $element_options->{alt};
         $element_options->{alt} = $alt;
-        return $caption;
+        return 1;
     }
     if ( my ($page) = $tmp_buffer =~ /^page=(\d+)$/x ) {
-        return $caption if defined $element_options->{page};
+        return 1 if defined $element_options->{page};
         $element_options->{page} = $page;
-        return $caption;
+        return 1;
     }
     if ( my ($loosy) = $tmp_buffer =~ /^loosy=(.*)$/x ) {
-        return $caption if ( $loosy ne 'false' );
-        return $caption if defined $element_options->{not_loosy};
+        return 1 if ( $loosy ne 'false' );
+        return 1 if defined $element_options->{not_loosy};
         $element_options->{not_loosy} = 1;
-        return $caption;
+        return 1;
     }
     if ( my ($class_string) = $tmp_buffer =~ /^class=(.*)$/x ) {
-        return $caption if defined $element_options->{classes};
+        return 1 if defined $element_options->{classes};
         $element_options->{classes} = [];
         for my $class ( split /\s+/x, $class_string ) {
             push @{ $element_options->{classes} }, $class;
         }
-        return $caption;
+        return 1;
     }
     my $return_video =
       $self->_try_parse_link_component_extra_options_video_controls(
         $tmp_buffer, $caption, $element_options );
-    return $return_video if defined $return_video;
+    return 1 if defined $return_video;
     return;
 }
 
@@ -923,10 +923,10 @@ sub _try_parse_link_component {
       $self->_try_parse_link_component_valign( $tmp_buffer, $caption,
         $element_options );
     return $return_caption_valign if defined $return_caption_halign;
-    my $return_caption_extra =
+    my $return_component_extra =
       $self->_try_parse_link_component_extra_options( $tmp_buffer, $caption,
         $element_options );
-    return $return_caption_extra if defined $return_caption_extra;
+    return $caption if defined $return_component_extra;
 
     if ( !defined $caption ) {
         return $tmp_buffer;
