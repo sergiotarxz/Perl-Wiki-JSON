@@ -334,6 +334,9 @@ sub _parse_in_array {
         }
         $buffer = '';
     }
+    if ($options->{is_bold} || $options->{is_italic}) {
+        warn 'Detected bold or italic unterminated syntax';
+    }
     return ( $i, $buffer );
 }
 

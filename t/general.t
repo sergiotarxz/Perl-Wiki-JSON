@@ -6,6 +6,7 @@ use warnings;
 use lib 'lib';
 
 use Test::Most;
+use Test::Warnings;
 
 use_ok 'Wiki::JSON';
 
@@ -192,6 +193,7 @@ Let's end them '' == '''
 }
 
 {
+    my $warnings = Test::Warnings::warning {
     my $parsed_html = Wiki::JSON->new->pre_html(q@= This is a (level 1) wiki title =
 == This is a (level 2) wiki subtitle ==
 This is a paragraph of text. This is '''bold text''', while this is ''italic 
@@ -636,6 +638,13 @@ Let's end here.@);
             'tag' => 'article'
           }
         ];
-
+};
+    like $warnings->[0], qr/Detected bold or italic unterminated syntax/, 'Unterminated syntax caught';
+    like $warnings->[1], qr/Detected bold or italic unterminated syntax/, 'Unterminated syntax caught';
+    like $warnings->[2], qr/Detected bold or italic unterminated syntax/, 'Unterminated syntax caught';
+    like $warnings->[3], qr/Detected bold or italic unterminated syntax/, 'Unterminated syntax caught';
+    like $warnings->[4], qr/HX found when the content is expected to be inline/, 'Block element detected inside inline';
+    like $warnings->[5], qr/Image found when the content is expected to be inline/, 'Block element detected inside inline';
+    like $warnings->[6], qr/HX found when the content is expected to be inline/, 'Block element detected inside inline';
 }
 done_testing();

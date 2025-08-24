@@ -233,6 +233,9 @@ sub _parse_output_try_parse_image {
                     $found_inline_element, $options );
             }
             else {
+                if ( $options->{inside_inline_element} ) {
+                    warn 'Image found when the content is expected to be inline';
+                }
                 ($needs_closing_parragraph) =
                   $self->_close_parragraph( $dom, $needs_closing_parragraph,
                     $options );
