@@ -1,3 +1,7 @@
+0.0.28 Sun Aug 24 08:05:08 2025 +0200
+    - Fixing href can contain spaces not escaped
+    - Fixing <br> after anchor when text goes after anchor in inline context.
+
 0.0.27 Sun Aug 24 07:16:55 2025 +0200
     - Adding pdf support
     - Adding support of selecting the starting pdf page

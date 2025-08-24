@@ -42,7 +42,7 @@ use_ok 'Wiki::JSON';
         ),
         Wiki::JSON::HTML->_open_html_element('p'),
         Wiki::JSON::HTML->_open_html_element(
-        'a', 0, { href => '/Funny Article' },
+        'a', 0, { href => '/Funny%20Article' },
         ),
         'funny article',
         Wiki::JSON::HTML->_close_html_element('a'),
@@ -73,7 +73,7 @@ use_ok 'Wiki::JSON';
         Wiki::JSON::HTML->_open_html_element('p'),
         'This is the funny article: ',
         Wiki::JSON::HTML->_open_html_element(
-        'a', 0, { href => '/Funny Article' },
+        'a', 0, { href => '/Funny%20Article' },
         ),
         'funny article',
         Wiki::JSON::HTML->_close_html_element('a'),
