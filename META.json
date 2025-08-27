@@ -29,7 +29,7 @@
             "Moo" : "0",
             "Path::Tiny" : "0",
             "Test::Most" : "0",
-            "Test::Warnings" : "0",
+            "Test::Output" : "0",
             "perl" : "v5.16.3"
          }
       }
